@@ -13,7 +13,7 @@ void Graph::addVertexBetween(Vertex existingVertex1, Vertex existingVertex2, Ver
     Node* edgeNode = edges[id1];
     while(edgeNode->next != NULL){
         if(edgeNode->vertexId == id2){
-            weight = edgeNode->weigth;
+            weight = edgeNode->weight;
         }
         edgeNode = edgeNode->next;
     }
@@ -83,6 +83,62 @@ void Graph::addVertex(int id, int type) {
     numVertices++;
 }
 
+void Graph::addTemporalVertices(std::vector<std::tuple<int, int, float, int>> adress) {
+    // sorted matriz by
+    std::vector<int> groups;
+    groups.push_back(0);
+    unsigned int numVerticesSameEdge = 0;
+    bool isSameEdge = true;
+    unsigned int i = 0;
+    while(i < adress.size()){
+        isSameEdge = true;
+        while(isSameEdge && numVerticesSameEdge < adress.size()){
+            if(std::get<0>(adress[i]) != std::get<0>(adress[i+1])){
+                isSameEdge = false;
+            }
+            if(std::get<1>(adress[i]) != std::get<1>(adress[i+1])){
+                isSameEdge = false;
+            }
+            numVerticesSameEdge++;
+            i++;
+        }
+        groups.push_back(numVerticesSameEdge);
+    }
+
+    float weight = 0;
+    for(unsigned int i = 0; i < groups.size() - 1; i++){
+        int j = groups[i];
+        Node* edgeNode = edges[std::get<0>(adress[j])];
+        while(edgeNode != NULL){
+            if(edgeNode->vertexId == std::get<1>(adress[j])){
+                weight = edgeNode->weight;
+                break;
+            }
+            edgeNode = edgeNode->next;
+        }
+    
+        addVertex(numVertices, std::get<3>(adress[j]));
+        addEdge(vertices[std::get<0>(adress[j])], vertices[numVertices-1], std::get<2>(adress[j])*weight);
+        bool frr = false;
+        for(int j = groups[i]; j < groups[i+1]-2; j++){
+            addVertex(numVertices, std::get<3>(adress[j]));
+            addEdge(vertices[numVertices-1], vertices[numVertices-2], (std::get<2>(adress[j+1])-std::get<2>(adress[j])) * weight);
+            frr = true;
+        }
+        std::cout << "j: " << j << std::endl;
+        //std::cout << groups[i+1]-groups[i] << std::endl;
+        if(groups[i+1]-groups[i]>1){
+            addVertex(numVertices, std::get<3>(adress[j+1]));
+            
+                addEdge(vertices[numVertices-1], vertices[numVertices-2], (std::get<2>(adress[j+1])-std::get<2>(adress[j])) * weight);
+            
+        }
+        
+        addEdge(vertices[numVertices-1], vertices[std::get<1>(adress[j])], (1-std::get<2>(adress[j+1]))*weight);
+
+    } 
+}
+
 int main() {
     // Create a graph
     Graph myGraph;
@@ -103,15 +159,17 @@ int main() {
 
     // print the graph
     //add vertex between 0 and 1 with proportion 0.25
-    myGraph.addVertexBetween(myGraph.vertices[0], myGraph.vertices[1], {3, 1}, 0.25);
+    // myGraph.addVertexBetween(myGraph.vertices[0], myGraph.vertices[1], {3, 1}, 0.25);
 
-
+    std::vector<std::tuple<int, int, float, int>> adress = {{0, 1, 0.25, 1}, {0, 1, 0.5, 1}, {0, 1, 0.75, 1}};
+    myGraph.addTemporalVertices(adress);
+    
 
     std::cout << "\nGraph:" << std::endl;
     for (int i = 0; i < myGraph.numVertices; i++) {
         Node* edgeNode = myGraph.edges[i];
         while(edgeNode != NULL){
-            std::cout << i << " --(" << edgeNode->weigth << ")-- " << edgeNode->vertexId << std::endl;
+            std::cout << i << " --(" << edgeNode->weight << ")-- " << edgeNode->vertexId << std::endl;
             edgeNode = edgeNode->next;
         }
     }

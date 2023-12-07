@@ -15,7 +15,7 @@ struct Vertex {
 
 struct Node {
     int vertexId;
-    float weigth;
+    float weight;
     Node* next;
 };
 
@@ -25,7 +25,8 @@ bool operator==(const Vertex& lhs, const Vertex& rhs);
 
 // Struct representing a graph
 struct Graph {
-    int numVertices;
+    int numVertices = 0;
+    int numTemporalVertices = 0;
     // Vector of vertices
     std::vector<Vertex> vertices;
 
@@ -43,6 +44,8 @@ struct Graph {
 
     // Function to add a new vertex to the graph
     void addVertex(int id, int type);
+
+    void addTemporalVertices(std::vector<std::tuple<int, int, float, int>> adress);
 
 };
 // Dijkstra's algorithm to find the n vertices of type "1" closest to the initial vertex

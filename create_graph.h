@@ -2,7 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <tuple>
-#include "Graph.h"
+#include "graph.h"
 using namespace std;
 
 struct Graph* newGraph(int numVertices);

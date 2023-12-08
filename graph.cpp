@@ -1,4 +1,4 @@
-#include "Graph.h"
+#include "graph.h"
 // Function to add a new vertex between two existing vertices with a weighted edge
 
 // Function to delete a vertex and its associated edges

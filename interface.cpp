@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <tuple>
-#include "Graph.h"
+#include "graph.h"
 #include "create_graph.h"
 #include "dijkstra.h"
 using namespace std;

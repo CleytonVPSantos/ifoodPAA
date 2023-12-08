@@ -2,7 +2,7 @@
 #include <vector>
 #include <tuple>
 #include "interface.h"
-#include "Graph.h"
+#include "graph.h"
 
 using namespace std;
 

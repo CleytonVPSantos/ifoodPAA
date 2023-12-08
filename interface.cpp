@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+#include <tuple>
 #include "Graph.h"
 #include "create_graph.h"
 using namespace std;
@@ -20,9 +22,11 @@ void transicao()
     cin.get();
 }
 
-bool escolha(struct Graph **ptrGraph)
+bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, float, int>> &address)
 {
-    int iOpcao, iOpcao2;
+    int iOpcao, iOpcao2, k;
+    vector<int> resposta;
+    Vertex iniVertex;
     
     string strFileName, strConfirma;
     
@@ -54,30 +58,53 @@ bool escolha(struct Graph **ptrGraph)
             case 0:
                 cout << "Insira o nome do arquivo:" << endl;
                 cin >> strFileName;
-                *ptrGraph = constructGraphFromFile(strFileName);
-                if (ptrGraph != nullptr)
+                *ptrGraph = (Graph*)constructGraphFromFile(strFileName);
+                if (*ptrGraph != nullptr)
                 {
-                    cout << "Arvore criada com sucesso!" << endl;
+                    cout << "Grafo criado com sucesso!" << endl;
                     transicao();
                 }
                 else
                 {
-                    cout << "Erro ao criar arvore." << endl;
+                    cout << "Erro ao criar grafo." << endl;
                     transicao();
                 }
                 return false;
             case 1:
-                *ptrGraph = constructGraphFromUserInput();
+                *ptrGraph = (Graph*)constructGraphFromUserInput();
                 if (ptrGraph != nullptr)
                 {
-                    cout << "Arvore criada com sucesso!" << endl;
+                    cout << "Grafo criado com sucesso!" << endl;
                     transicao();
                 }
                 else
                 {
-                    cout << "Erro ao criar arvore." << endl;
+                    cout << "Erro ao criar grafo." << endl;
                     transicao();
                 }
+                return false;
+            default:
+                cout << "Opcao invalida." << endl;
+                transicao();
+                return false;
+        }
+    case 2:
+        cout << "Opcao 2 - Inserir informacoes sobre entregadores" << endl;
+        cout << "Voce gostaria de fazer o input via arquivo (0) ou via terminal (1)?" << endl;
+        cin >> iOpcao2;
+        switch (iOpcao2)
+        {
+            case 0:
+                cout << "Insira o nome do arquivo:" << endl;
+                cin >> strFileName;
+                address = constructAddressFromFile(strFileName);
+                cout << "Entregadores adicionados!" << endl;
+                transicao();
+                return false;
+            case 1:
+                address = constructAddressFromUserInput();
+                cout << "Entregadores adicionados!" << endl;
+                transicao();
                 return false;
             default:
                 cout << "Opcao invalida." << endl;

@@ -1,14 +1,16 @@
-#ifndef CREATE_TREE_H
-#define CREATE_TREE_H
 #include <iostream>
 #include <fstream>
+#include <vector>
+#include <tuple>
+#include "Graph.h"
 using namespace std;
 
 struct Graph* newGraph(int numVertices);
 
 struct Graph* constructGraphFromFile(const string& strFileName);
 
-// Constrói uma árvore binária de busca a partir de dados inseridos pelo usuário
 struct Graph* constructGraphFromUserInput();
 
-#endif
+vector<tuple<int, int, float, int>> constructAddressFromFile(const string& strFileName);
+
+vector<tuple<int, int, float, int>> constructAddressFromUserInput();

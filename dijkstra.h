@@ -8,6 +8,6 @@ std::vector<int> findNClosest(Vertex, Graph, int);
 
 std::vector<int> dijkstraWithGoal(Vertex, Vertex, Graph);
 
-std::vector<int> buildPath(Vertex, int*);
+std::vector<int> buildPath(Vertex, myGraph, int*);
 
 std::vector<int> mergePaths(std::vector<int>, std::vector<int>);

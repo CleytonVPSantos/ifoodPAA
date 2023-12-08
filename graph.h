@@ -50,6 +50,8 @@ struct Graph {
     // Function to add a new vertex to the graph
     void addVertex(int id, int type);
 
+    double findEdgeWeight(int idVertex1, int idVertex2);
+
     void addTemporalVertices(std::vector<std::tuple<int, int, double, int>>* address);
 
 };

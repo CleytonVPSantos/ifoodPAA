@@ -7,44 +7,55 @@
 
 const int INF = std::numeric_limits<int>::max();
 
-std::vector<int> dijkstra(Vertex initialVertex, Graph myGraph, int k)
+std::vector<int> findNClosest(Vertex, Graph, int);
+std::vector<int> dijkstraWithGoal(Vertex, Vertex, Graph);
+std::vector<int> buildPath(Vertex, int*);
+std::vector<int> mergePaths(std::vector<int>, std::vector<int>);
+
+
+std::vector<int> findNClosest(Vertex initialVertex, Graph myGraph, int n)
 {
-    int n = myGraph.numTemporalVertices;
-    std::vector<int> resposta (k);
-    int count = 0;
+    int numVertices = myGraph.numTemporalVertices; // numero de vertices no grafo (incluindo temporários)
+    std::vector<int> deliveryman (n); // entregadores mais próximos
+    int count = 0; // conta entregadores encontrados
+
+    // inicialização do Dijkstra
     std::priority_queue<std::pair<int, int> > heap;
-    bool visited[n];
-    int distance[n];  
-    for(int i = 0; i < n; i++){
-        visited[i] = 0;
-        distance[n] = INF;
+    bool visited[numVertices];
+    int distance[numVertices];  
+    for(int i = 0; i < numVertices; i++){
+        visited[i] = false;
+        distance[numVertices] = INF;
     }
     distance[initialVertex.id] = 0;
     heap.push(std::make_pair(distance[initialVertex.id], initialVertex.id));
 
-    while(!heap.empty() && count < k){
-        Vertex v1 = myGraph.vertices[heap.top().second];
+    // the magic is done here
+    while(!heap.empty() && count < n){
+        Vertex v1 = myGraph.vertices[heap.top().second]; 
         heap.pop();
         if(distance[v1.id] == INF) { break; }
-        Node* fuckyeah = myGraph.edges[v1.id];
-        while(fuckyeah){
-            Vertex v2 = myGraph.vertices[fuckyeah->vertexId];
+        Node* edges = myGraph.edges[v1.id];
+        while(edges){
+            Vertex v2 = myGraph.vertices[edges->vertexId];
             if(!visited[v2.id]) {
-                int cost = fuckyeah->weight;
+                int cost = edges->weight;
                 if(distance[v1.id] + cost < distance[v2.id]){
                     distance[v2.id] = distance[v1.id] + cost;
                     heap.push(std::make_pair(distance[v2.id], v2.id));
                 }
             }
-            fuckyeah = fuckyeah->next;
+            edges = edges->next;
         }
         visited[v1.id] = true;
+
+        // checa se o vértice que checamos é entregador
         if(v1.type == 1){
-            resposta[count] = v1.id;
+            deliveryman[count] = v1.id;
             count++;
         }
-    }
-    return resposta;
+    }   
+    return deliveryman;
 }
 
 
@@ -53,10 +64,10 @@ std::vector<int> dijkstra(Vertex initialVertex, Graph myGraph, int k)
 
 
 
-std::vector<Vertex> dijkstra2(Vertex initialVertex, Graph myGraph, Vertex finalVertex)
-{
-    int n = myGraph.numTemporalVertices;
-    int count = 0;
+std::vector<int> dijkstraWithGoal(Vertex initialVertex, Vertex finalVertex, Graph myGraph){
+    int n = myGraph.numTemporalVertices; // numero de vertices no grafo (incluindo temporários)
+
+    // inicialização do Dijkstra
     std::priority_queue<std::pair<int, int> > heap;
     bool visited[n];
     int parent[n];
@@ -70,29 +81,31 @@ std::vector<Vertex> dijkstra2(Vertex initialVertex, Graph myGraph, Vertex finalV
     distance[initialVertex.id] = 0;
     heap.push(std::make_pair(distance[initialVertex.id], initialVertex.id));
 
+    // loop principal
     while(!heap.empty()){
         Vertex v1 = myGraph.vertices[heap.top().second];
         heap.pop();
         if(distance[v1.id] == INF) { break; }
-        Node* fuckyeah = myGraph.edges[v1.id];
-        while(fuckyeah){
-            Vertex v2 = myGraph.vertices[fuckyeah->vertexId];
+        Node* edges = myGraph.edges[v1.id];
+        while(edges){
+            Vertex v2 = myGraph.vertices[edges->vertexId];
             if(!visited[v2.id]) {
-                int cost = fuckyeah->weight;
+                int cost = edges->weight;
                 if(distance[v1.id] + cost < distance[v2.id]){
                     distance[v2.id] = distance[v1.id] + cost;
                     parent[v2.id] = v1.id;
                     heap.push(std::make_pair(distance[v2.id], v2.id));
                 }
             }
-            fuckyeah = fuckyeah->next;
+            edges = edges->next;
         }
         visited[v1.id] = true;
+
+        // checa se chegamos no vértice final
         if(v1.id == finalVertex.id)
             break;
     }
-    std::vector<Vertex> ret (1);
-    return ret;
+    return buildPath(finalVertex, parent);
 }
 
 
@@ -107,6 +120,18 @@ std::vector<int> buildPath(Vertex finalVertex, int parent[]){
     return path;
 }
 
+
+std::vector<int> mergePaths(std::vector<int> first, std::vector<int> second){
+    for(int i = 0; i < second.size(); i++){
+        first.push_back(second[i]);
+    }
+    return first;
+}
+
+
+std::vector<int> simpleDelivery(Vertex deliveryMan, Vertex store, Vertex costumer, Graph myGraph){
+    return mergePaths(dijkstraWithGoal(deliveryMan, store, myGraph), dijkstraWithGoal(store, costumer, myGraph));
+}
 
 
 // Questao 3 primeira parte

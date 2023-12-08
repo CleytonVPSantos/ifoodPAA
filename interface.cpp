@@ -25,7 +25,8 @@ void transicao()
 
 bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &address)
 {
-    int iOpcao, iOpcao2, k;
+    int iOpcao, iOpcao2, k, numEsquinas;
+    tuple<int, int, double, int> entregador;
     vector<int> resposta;
     Vertex iniVertex;
     
@@ -160,10 +161,14 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
             cout << endl;
         }*/
         resposta = findNClosest(iniVertex, **ptrGraph, k);
-        cout << "Os " << k << " entregadores mais proximos sao:" << endl;
+        (**ptrGraph).deleteTemporalVertices();
+        numEsquinas = (**ptrGraph).numVertices;
+        cout << "Os " << k << " entregadores mais proximos estao nos enderecos:" << endl;
         for (int i = 0; i < k; i++)
         {
-            cout << resposta[i] << endl;
+            entregador = address[resposta[i] - numEsquinas];
+            cout << "(" << get<0>(entregador) << ", " << get<1>(entregador) << ", "
+                 << get<2>(entregador) << ")" << endl;
         }
         transicao();
         return false;

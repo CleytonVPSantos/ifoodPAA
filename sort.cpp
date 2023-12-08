@@ -1,6 +1,6 @@
 #include "sort.h"
 
-bool operator>(const std::tuple<int, int, float, int>& a, const std::tuple<int, int, float, int>& b) {
+bool operator>(const std::tuple<int, int, double, int>& a, const std::tuple<int, int, double, int>& b) {
     // Comparação com base nas três primeiras entradas
     if (std::get<0>(a) != std::get<0>(b)) {
         return std::get<0>(a) > std::get<0>(b);
@@ -13,13 +13,13 @@ bool operator>(const std::tuple<int, int, float, int>& a, const std::tuple<int, 
     return std::get<2>(a) > std::get<2>(b);
 }
 
-void swap(std::vector<std::tuple<int, int, float, int>>* address, int i, int j) {
-    std::tuple<int, int, float, int> aux = (*address)[i];
+void swap(std::vector<std::tuple<int, int, double, int>>* address, int i, int j) {
+    std::tuple<int, int, double, int> aux = (*address)[i];
     (*address)[i] = (*address)[j];
     (*address)[j] = aux;
 }
 
-void heapify(std::vector<std::tuple<int, int, float, int>>* address, int n, int root) {
+void heapify(std::vector<std::tuple<int, int, double, int>>* address, int n, int root) {
     int inx = root;
     int leftInx = 2 * root + 1;
     int rightInx = 2 * root + 2;
@@ -38,13 +38,13 @@ void heapify(std::vector<std::tuple<int, int, float, int>>* address, int n, int 
     }
 }
 
-void buildHeap(std::vector<std::tuple<int, int, float, int>>* address, int n) {
+void buildHeap(std::vector<std::tuple<int, int, double, int>>* address, int n) {
     for (int i = (n / 2 - 1); i >= 0; i--) {
         heapify(address, n, i);
     }
 }
 
-void heapSort(std::vector<std::tuple<int, int, float, int>>* address) {
+void heapSort(std::vector<std::tuple<int, int, double, int>>* address) {
     int n = (*address).size();
 
     // Construir o heap inicial
@@ -57,7 +57,7 @@ void heapSort(std::vector<std::tuple<int, int, float, int>>* address) {
     }
 }
 
-void sortAddressList(std::vector<std::tuple<int, int, float, int>>* address) {
+void sortAddressList(std::vector<std::tuple<int, int, double, int>>* address) {
     // Percorre a lista, troca os elementos se o primeiro for maior que o segundo,
     // e ajusta o terceiro elemento para ser 1 a menos do seu valor original.
     for (auto& tuple : *address) {

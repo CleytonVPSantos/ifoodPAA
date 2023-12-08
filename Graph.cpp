@@ -74,10 +74,7 @@ void Graph::addVertex(int id, int type) {
     }
 }
 
-void Graph::addTemporalVertices(std::vector<std::tuple<int, int, float, int>> address) {
-=======
 void Graph::addTemporalVertices(std::vector<std::tuple<int, int, double, int>> adress) {
->>>>>>> Stashed changes
     // sorted matriz by
     heapSort(&address);
     std::vector<int> groups;

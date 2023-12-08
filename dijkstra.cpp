@@ -87,13 +87,21 @@ dijkstra_type dijkstra(Vertex initialVertex, Vertex finalVertex, Graph myGraph, 
 
 std::vector<int> buildPath(Vertex finalVertex, Graph myGraph, std::vector<int> parent){ 
     int i = finalVertex.id;
-    std::vector<int> path;
+    std::vector<int> reversePath;
+    reversePath.push_back(i);
+    i = parent[i];
     while(parent[i] != i)
     {
         if(myGraph.vertices[i].type == 0)
-            path.push_back(i);
+            reversePath.push_back(i);
         i = parent[i];
     }
+    reversePath.push_back(i);
+    int n = reversePath.size();
+    std::vector<int> path (n);
+    for(int i = 1; i <= n; i++){
+        path[n] = reversePath[n-i];
+    } 
     return path;
 }
 
@@ -115,6 +123,19 @@ std::vector<int> findNClosest(Vertex initialVertex, Graph myGraph, int n)
 
 
 
+std::vector<int> dijkstraWithGoal(Vertex initialVertex, Vertex finalVertex, Graph myGraph){
+    return buildPath(finalVertex, myGraph, std::get<1> (dijkstra(initialVertex, finalVertex, myGraph, 1, 1)));
+}
+
+
+
+std::vector<int> simpleDelivery(Vertex deliveryMan, Vertex store, Vertex costumer, Graph myGraph){
+    
+    return mergePaths(dijkstraWithGoal(deliveryMan, store, myGraph), dijkstraWithGoal(store, costumer, myGraph));
+}
+
+
+
 std::vector<std::vector<int>> pathsOfNClosest(Vertex initialVertex, Graph myGraph, int n){
 
     std::vector<std::vector<int>> deliverymanPath; // entregadores mais próximos
@@ -127,19 +148,6 @@ std::vector<std::vector<int>> pathsOfNClosest(Vertex initialVertex, Graph myGrap
         deliverymanPath.push_back(buildPath(myGraph.vertices[deliveryman[i]], myGraph, parent));
     } 
     return deliverymanPath;
-}
-
-
-
-std::vector<int> dijkstraWithGoal(Vertex initialVertex, Vertex finalVertex, Graph myGraph){
-    return buildPath(finalVertex, myGraph, std::get<1> (dijkstra(initialVertex, finalVertex, myGraph, 1, 1)));
-}
-
-
-
-std::vector<int> simpleDelivery(Vertex deliveryMan, Vertex store, Vertex costumer, Graph myGraph){
-    
-    return mergePaths(dijkstraWithGoal(deliveryMan, store, myGraph), dijkstraWithGoal(store, costumer, myGraph));
 }
 
 

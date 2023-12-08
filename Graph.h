@@ -11,6 +11,15 @@
 struct Vertex {
     int id;
     int type;
+
+    Vertex(){
+        id = 0;
+        type = 0;
+    }
+    Vertex(int _id, int _type){
+        id = _id;
+        type = _type;
+    }
 };
 
 struct Node {

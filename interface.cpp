@@ -1,4 +1,6 @@
 #include <iostream>
+#include "Graph.h"
+#include "create_graph.h"
 using namespace std;
 
 void tela()
@@ -18,9 +20,9 @@ void transicao()
     cin.get();
 }
 
-bool escolha()
+bool escolha(struct Graph **ptrGraph)
 {
-    int iOpcao, iData;
+    int iOpcao, iOpcao2;
     
     string strFileName, strConfirma;
     
@@ -42,6 +44,45 @@ bool escolha()
             cout << "Operacao cancelada." << endl;
             transicao();
             return false;
+        }
+    case 1:
+        cout << "Opcao 1 - Inserir informacoes sobre a cidade (input de ruas)" << endl;
+        cout << "Voce gostaria de fazer o input via arquivo (0) ou via terminal (1)?" << endl;
+        cin >> iOpcao2;
+        switch (iOpcao2)
+        {
+            case 0:
+                cout << "Insira o nome do arquivo:" << endl;
+                cin >> strFileName;
+                *ptrGraph = constructGraphFromFile(strFileName);
+                if (ptrGraph != nullptr)
+                {
+                    cout << "Arvore criada com sucesso!" << endl;
+                    transicao();
+                }
+                else
+                {
+                    cout << "Erro ao criar arvore." << endl;
+                    transicao();
+                }
+                return false;
+            case 1:
+                *ptrGraph = constructGraphFromUserInput();
+                if (ptrGraph != nullptr)
+                {
+                    cout << "Arvore criada com sucesso!" << endl;
+                    transicao();
+                }
+                else
+                {
+                    cout << "Erro ao criar arvore." << endl;
+                    transicao();
+                }
+                return false;
+            default:
+                cout << "Opcao invalida." << endl;
+                transicao();
+                return false;
         }
     default:
         cout << "Opcao invalida." << endl;

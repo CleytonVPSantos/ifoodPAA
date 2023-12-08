@@ -8,6 +8,6 @@ void tela();
 
 void transicao();
 
-bool escolha();
+bool escolha(struct Graph **ptrGraph);
 
 #endif

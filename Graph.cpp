@@ -139,6 +139,7 @@ void Graph::addTemporalVertices(std::vector<std::tuple<int, int, float, int>> ad
     } 
 }
 
+/*
 int main() {
     // Create a graph
     Graph myGraph;
@@ -176,3 +177,4 @@ int main() {
 
     return 0;
 }
+*/

@@ -74,6 +74,19 @@ void Graph::addVertex(int id, int type) {
     }
 }
 
+double Graph::findEdgeWeight(int idVertex1, int idVertex2){
+    double weight;
+    Node* edgeNode = edges[idVertex1];
+    while(edgeNode != NULL){
+        if(edgeNode->vertexId == idVertex2){
+            weight = edgeNode->weight;
+            break;
+        }
+        edgeNode = edgeNode->next;
+    }
+    return weight;
+}
+
 void Graph::addTemporalVertices(std::vector<std::tuple<int, int, double, int>>* address) {
     // sorted matriz by
     sortAddressList(address);
@@ -100,14 +113,7 @@ void Graph::addTemporalVertices(std::vector<std::tuple<int, int, double, int>>* 
     double weight = 0;
     for(unsigned int i = 0; i < groups.size() - 1; i++){
         int j = groups[i];
-        Node* edgeNode = edges[std::get<0>((*address)[j])];
-        while(edgeNode != NULL){
-            if(edgeNode->vertexId == std::get<1>((*address)[j])){
-                weight = edgeNode->weight;
-                break;
-            }
-            edgeNode = edgeNode->next;
-        }
+        weight = findEdgeWeight(std::get<0>((*address)[j]), std::get<1>((*address)[j]));
         addVertex(numVertices, std::get<3>((*address)[j]));
         addEdge(vertices[std::get<0>((*address)[j])], vertices[numVertices-1], weight*std::get<2>((*address)[j]));
 

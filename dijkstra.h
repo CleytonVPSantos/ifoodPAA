@@ -6,7 +6,11 @@
 
 bool compare(std::pair<double, int>, std::pair<double, int> );
 
+using dijkstra_type = std::tuple<std::vector<int>, std::vector<int>, std::vector<double>, std::vector<int>>;
+
 std::vector<int> findNClosest(Vertex, Graph, int);
+
+dijkstra_type dijkstra(Vertex, Vertex, Graph, int, int);
 
 std::vector<std::vector<int>> pathsOfNClosest(Vertex, Graph, int);
 
@@ -16,7 +20,7 @@ std::vector<int> mergePaths(std::vector<int>, std::vector<int>);
 
 std::vector<int> simpleDelivery(Vertex, Vertex, Vertex, Graph);
 
-std::vector<int> buildPath(Vertex, Graph, int*);
+std::vector<int> buildPath(Vertex, Graph, std::vector<int>);
 
 std::vector<int> mergePaths(std::vector<int>, std::vector<int>);
 

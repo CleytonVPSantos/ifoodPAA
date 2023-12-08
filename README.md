@@ -34,3 +34,14 @@ Essa operação oferece sugestões para entregas adicionais que podem ser inclu�
    ```bash
    make main
    ```
+
+3. Siga as instruções da aplicação.
+
+## Guia de Estilo para Inputs 📝
+Muitas vezes, a aplicação oferecerá a opção de carregar dados através de arquivos externos. Esses arquivos, muitas vezes de extensão `.txt`, devem seguir o seguinte guia de estilo para serem corretamente carregados.
+
+### Input de grafo da cidade 🏙 (opção 1)
+A primeira linha do arquivo deve ter um número `N`, a quantidade de esquinas a comporem ao grafo. As linhas seguintes descreverão as arestas do grafo. Cada linha dever da forma `X Y W`, composta de dois inteiros, `X` e `Y`, entre `0` e `N-1`, e um número decimal `W` representando o peso da aresta, proporcional ao tempo para percorrer a via entre as esquinas `X` e `Y`.
+
+### Input de entregadores 🛵 (opção 2)
+O arquivo deve ser composto de várias linhas, cada uma representando o endereço da localização de um entregador. Cada endereço deve ser da forma `X Y f`, sendo `X` e `Y` inteiros entre `0` e `N-1`, sendo `N` a quantidade de esquinas na cidade, e `f` um número decimal entre `0` e `1`, representando a fração do caminho entre `X` e `Y` em que se encontra o entregador.

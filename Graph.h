@@ -49,7 +49,7 @@ struct Graph {
     // Function to add a new vertex to the graph
     void addVertex(int id, int type);
 
-    Vertex addTemporalVertices(std::vector<std::tuple<int, int, float, int>> adress);
+    void addTemporalVertices(std::vector<std::tuple<int, int, float, int>> adress);
 
 };
 

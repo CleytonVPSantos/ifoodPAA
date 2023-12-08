@@ -74,7 +74,7 @@ void Graph::addVertex(int id, int type) {
     }
 }
 
-Vertex Graph::addTemporalVertices(std::vector<std::tuple<int, int, float, int>> adress) {
+void Graph::addTemporalVertices(std::vector<std::tuple<int, int, float, int>> adress) {
     // sorted matriz by
     std::sort(adress.begin(), adress.end());
     std::vector<int> groups;
@@ -131,44 +131,44 @@ Vertex Graph::addTemporalVertices(std::vector<std::tuple<int, int, float, int>> 
     } 
 }
 
-int main() {
-    // Create a graph
-    Graph myGraph;
+// int main() {
+//     // Create a graph
+//     Graph myGraph;
 
-    // Add some vertices
-    myGraph.addVertex(0, 0);
-    myGraph.addVertex(1, 0);
-    myGraph.addVertex(2, 0);
+//     // Add some vertices
+//     myGraph.addVertex(0, 0);
+//     myGraph.addVertex(1, 0);
+//     myGraph.addVertex(2, 0);
 
-    // Add weighted edges
-    myGraph.addEdge(myGraph.vertices[0], myGraph.vertices[1], 10);
-    myGraph.addEdge(myGraph.vertices[1], myGraph.vertices[2], 5);
-    myGraph.addEdge(myGraph.vertices[0], myGraph.vertices[2], 2);
+//     // Add weighted edges
+//     myGraph.addEdge(myGraph.vertices[0], myGraph.vertices[1], 10);
+//     myGraph.addEdge(myGraph.vertices[1], myGraph.vertices[2], 5);
+//     myGraph.addEdge(myGraph.vertices[0], myGraph.vertices[2], 2);
 
-    std::vector<std::tuple<int, int, float, int>> adress = {{0, 1, 0.1, 1}, {0,1,0.4,1}, {0,1,0.8,1}, {2,1,0.2,1}};
-    myGraph.addTemporalVertices(adress);
+//     std::vector<std::tuple<int, int, float, int>> adress = {{0, 1, 0.1, 1}, {0,1,0.4,1}, {0,1,0.8,1}, {2,1,0.2,1}};
+//     myGraph.addTemporalVertices(adress);
     
 
-    std::cout << "\nGraph:" << std::endl;
-    for (int i = 0; i < myGraph.numVertices; i++) {
-        Node* edgeNode = myGraph.edges[i];
-        while(edgeNode != NULL){
-            std::cout << i << " --(" << edgeNode->weight << ")-- " << edgeNode->vertexId << std::endl;
-            edgeNode = edgeNode->next;
-        }
-    }
+//     std::cout << "\nGraph:" << std::endl;
+//     for (int i = 0; i < myGraph.numVertices; i++) {
+//         Node* edgeNode = myGraph.edges[i];
+//         while(edgeNode != NULL){
+//             std::cout << i << " --(" << edgeNode->weight << ")-- " << edgeNode->vertexId << std::endl;
+//             edgeNode = edgeNode->next;
+//         }
+//     }
 
-    myGraph.deleteTemporalVertices();
+//     myGraph.deleteTemporalVertices();
 
 
-    std::cout << "\nGraph After:" << std::endl;
-    for (int i = 0; i < myGraph.numVertices; i++) {
-        Node* edgeNode = myGraph.edges[i];
-        while(edgeNode != NULL){
-            std::cout << i << " --(" << edgeNode->weight << ")-- " << edgeNode->vertexId << std::endl;
-            edgeNode = edgeNode->next;
-        }
-    }
+//     std::cout << "\nGraph After:" << std::endl;
+//     for (int i = 0; i < myGraph.numVertices; i++) {
+//         Node* edgeNode = myGraph.edges[i];
+//         while(edgeNode != NULL){
+//             std::cout << i << " --(" << edgeNode->weight << ")-- " << edgeNode->vertexId << std::endl;
+//             edgeNode = edgeNode->next;
+//         }
+//     }
 
-    return 0;
-}
+//     return 0;
+// }

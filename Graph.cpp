@@ -74,9 +74,9 @@ void Graph::addVertex(int id, int type) {
     }
 }
 
-void Graph::addTemporalVertices(std::vector<std::tuple<int, int, double, int>> adress) {
+void Graph::addTemporalVertices(std::vector<std::tuple<int, int, double, int>> address) {
     // sorted matriz by
-    heapSort(&address);
+    sortAddressList(&address);
     std::vector<int> groups;
     groups.push_back(0);
     unsigned int numVerticesSameEdge = 0;

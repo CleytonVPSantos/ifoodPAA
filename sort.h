@@ -14,5 +14,7 @@ void buildHeap(std::vector<std::tuple<int, int, double, int>>* address, int n);
 
 void heapSort(std::vector<std::tuple<int, int, double, int>>* address);
 
+void sortAddressList(std::vector<std::tuple<int, int, double, int>>* address);
+
 
 #endif

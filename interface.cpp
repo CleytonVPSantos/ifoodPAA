@@ -143,7 +143,7 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, float, int>> &addre
         }
         cout << "Insira o numero de entregadores proximos a serem encontrados:" << endl;
         cin >> k;
-        resposta = dijkstra(iniVertex, **ptrGraph, k);
+        resposta = findNClosest(iniVertex, **ptrGraph, k);
         cout << "Os " << k << " entregadores mais proximos sao:" << endl;
         for (int i = 0; i < k; i++)
         {

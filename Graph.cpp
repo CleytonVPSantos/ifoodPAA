@@ -74,21 +74,21 @@ void Graph::addVertex(int id, int type) {
     }
 }
 
-void Graph::addTemporalVertices(std::vector<std::tuple<int, int, double, int>> address) {
+void Graph::addTemporalVertices(std::vector<std::tuple<int, int, double, int>>* address) {
     // sorted matriz by
-    sortAddressList(&address);
+    sortAddressList(address);
     std::vector<int> groups;
     groups.push_back(0);
     unsigned int numVerticesSameEdge = 0;
     bool isSameEdge = true;
     unsigned int i = 0;
-    while(i < address.size()){
+    while(i < (*address).size()){
         isSameEdge = true;
-        while(isSameEdge && numVerticesSameEdge < address.size()){
-            if(std::get<0>(address[i]) != std::get<0>(address[i+1])){
+        while(isSameEdge && numVerticesSameEdge < (*address).size()){
+            if(std::get<0>((*address)[i]) != std::get<0>((*address)[i+1])){
                 isSameEdge = false;
             }
-            if(std::get<1>(address[i]) != std::get<1>(address[i+1])){
+            if(std::get<1>((*address)[i]) != std::get<1>((*address)[i+1])){
                 isSameEdge = false;
             }
             numVerticesSameEdge++;
@@ -100,33 +100,33 @@ void Graph::addTemporalVertices(std::vector<std::tuple<int, int, double, int>> a
     double weight = 0;
     for(unsigned int i = 0; i < groups.size() - 1; i++){
         int j = groups[i];
-        Node* edgeNode = edges[std::get<0>(address[j])];
+        Node* edgeNode = edges[std::get<0>((*address)[j])];
         while(edgeNode != NULL){
-            if(edgeNode->vertexId == std::get<1>(address[j])){
+            if(edgeNode->vertexId == std::get<1>((*address)[j])){
                 weight = edgeNode->weight;
                 break;
             }
             edgeNode = edgeNode->next;
         }
-        addVertex(numVertices, std::get<3>(address[j]));
-        addEdge(vertices[std::get<0>(address[j])], vertices[numVertices-1], weight*std::get<2>(address[j]));
+        addVertex(numVertices, std::get<3>((*address)[j]));
+        addEdge(vertices[std::get<0>((*address)[j])], vertices[numVertices-1], weight*std::get<2>((*address)[j]));
 
         if(groups[i+1]-groups[i]<2){
-            addEdge(vertices[numVertices-1], vertices[std::get<1>(address[j])], weight*(1-std::get<2>(address[j])));
+            addEdge(vertices[numVertices-1], vertices[std::get<1>((*address)[j])], weight*(1-std::get<2>((*address)[j])));
         }
         else if(groups[i+1]-groups[i]<3){
-            addVertex(numVertices, std::get<3>(address[j+1]));
-            addEdge(vertices[numVertices-1], vertices[numVertices-2], weight*(std::get<2>(address[j+1])-std::get<2>(address[j])));
-            addEdge(vertices[std::get<1>(address[j+1])], vertices[numVertices-1], weight*(1-std::get<2>(address[j+1])));
+            addVertex(numVertices, std::get<3>((*address)[j+1]));
+            addEdge(vertices[numVertices-1], vertices[numVertices-2], weight*(std::get<2>((*address)[j+1])-std::get<2>((*address)[j])));
+            addEdge(vertices[std::get<1>((*address)[j+1])], vertices[numVertices-1], weight*(1-std::get<2>((*address)[j+1])));
         }
         else{
             for(int k = 1; k < groups[i+1]-groups[i]-1; k++){
-                addVertex(numVertices, std::get<3>(address[j+k]));
-                addEdge(vertices[numVertices-1], vertices[numVertices-2], weight*(std::get<2>(address[j+k])-std::get<2>(address[j+k-1])));
+                addVertex(numVertices, std::get<3>((*address)[j+k]));
+                addEdge(vertices[numVertices-1], vertices[numVertices-2], weight*(std::get<2>((*address)[j+k])-std::get<2>((*address)[j+k-1])));
             }
-            addVertex(numVertices, std::get<3>(address[j+groups[i+1]-groups[i]-1]));
-            addEdge(vertices[numVertices-1], vertices[numVertices-2], weight*(std::get<2>(address[j+groups[i+1]-groups[i]-1])-std::get<2>(address[j+groups[i+1]-groups[i]-2])));
-            addEdge(vertices[numVertices-1], vertices[std::get<1>(address[j+groups[i+1]-groups[i]-1])], weight*(1-std::get<2>(address[j+groups[i+1]-groups[i]-1])));
+            addVertex(numVertices, std::get<3>((*address)[j+groups[i+1]-groups[i]-1]));
+            addEdge(vertices[numVertices-1], vertices[numVertices-2], weight*(std::get<2>((*address)[j+groups[i+1]-groups[i]-1])-std::get<2>((*address)[j+groups[i+1]-groups[i]-2])));
+            addEdge(vertices[numVertices-1], vertices[std::get<1>((*address)[j+groups[i+1]-groups[i]-1])], weight*(1-std::get<2>((*address)[j+groups[i+1]-groups[i]-1])));
         }
     } 
 }

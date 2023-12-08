@@ -132,7 +132,7 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
         cin >> iVertice1 >> iVertice2 >> fWeight;
         address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 3));
         //Ordenar adress
-        (*ptrGraph)->addTemporalVertices(address);
+        (*ptrGraph)->addTemporalVertices(&address);
         //iterar para achar o vertice de coleta tipo
         for (int i = 0; i < (*ptrGraph)->numVertices; i++)
         {

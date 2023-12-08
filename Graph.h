@@ -1,3 +1,5 @@
+#ifndef GRAPH_H
+#define GRAPH_H
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -54,8 +56,8 @@ struct Graph {
     // Function to add a new vertex to the graph
     void addVertex(int id, int type);
 
-    void addTemporalVertices(std::vector<std::tuple<int, int, float, int>> adress);
+    Vertex addTemporalVertices(std::vector<std::tuple<int, int, float, int>> adress);
 
 };
-// Dijkstra's algorithm to find the n vertices of type "1" closest to the initial vertex
-std::vector<Vertex> dijkstra(Vertex initialVertex, int n, Graph myGraph);
+
+#endif

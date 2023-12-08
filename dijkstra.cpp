@@ -7,10 +7,10 @@
 
 const int INF = std::numeric_limits<int>::max();
 
-int* dijkstra(Vertex initialVertex, Graph myGraph, int k)
+std::vector<int> dijkstra(Vertex initialVertex, Graph myGraph, int k)
 {
     int n = myGraph.numTemporalVertices;
-    int resposta[k];
+    std::vector<int> resposta (k);
     int count = 0;
     std::priority_queue<std::pair<int, int> > heap;
     bool visited[n];
@@ -30,7 +30,7 @@ int* dijkstra(Vertex initialVertex, Graph myGraph, int k)
         while(fuckyeah){
             Vertex v2 = myGraph.vertices[fuckyeah->vertexId];
             if(!visited[v2.id]) {
-                int cost = fuckyeah->weigth;
+                int cost = fuckyeah->weight;
                 if(distance[v1.id] + cost < distance[v2.id]){
                     distance[v2.id] = distance[v1.id] + cost;
                     heap.push(std::make_pair(distance[v2.id], v2.id));
@@ -78,7 +78,7 @@ std::vector<Vertex> dijkstra2(Vertex initialVertex, Graph myGraph, Vertex finalV
         while(fuckyeah){
             Vertex v2 = myGraph.vertices[fuckyeah->vertexId];
             if(!visited[v2.id]) {
-                int cost = fuckyeah->weigth;
+                int cost = fuckyeah->weight;
                 if(distance[v1.id] + cost < distance[v2.id]){
                     distance[v2.id] = distance[v1.id] + cost;
                     parent[v2.id] = v1.id;
@@ -91,6 +91,8 @@ std::vector<Vertex> dijkstra2(Vertex initialVertex, Graph myGraph, Vertex finalV
         if(v1.id == finalVertex.id)
             break;
     }
+    std::vector<Vertex> ret (1);
+    return ret;
 }
 
 
@@ -136,7 +138,7 @@ std::vector<Vertex> dijkstra3(Vertex cliente, Graph myGraph, int k, int j){
         while(fuckyeah){
             Vertex v2 = myGraph.vertices[fuckyeah->vertexId];
             if(!visited[v2.id]) {
-                int cost = fuckyeah->weigth;
+                int cost = fuckyeah->weight;
                 if(distance[v1.id] + cost < distance[v2.id]){
                     distance[v2.id] = distance[v1.id] + cost;
                     parent[v2.id] = v1.id;
@@ -166,9 +168,9 @@ std::vector<Vertex> dijkstra3(Vertex cliente, Graph myGraph, int k, int j){
 
     Vertex pseudo = myGraph.vertices[n];
     // encontra os j entregadores mais próximos do vértice virtual    
-    int count = 0;
+    count = 0;
     int resposta[j];
-    std::priority_queue<std::pair<int, int> > heap;
+    while(!heap.empty()) heap.pop();
     bool new_visited[n+1];
     int new_distance[n+1];
     int new_parent[n+1];
@@ -188,7 +190,7 @@ std::vector<Vertex> dijkstra3(Vertex cliente, Graph myGraph, int k, int j){
         while(fuckyeah){
             Vertex v2 = myGraph.vertices[fuckyeah->vertexId];
             if(!visited[v2.id]) {
-                int cost = fuckyeah->weigth;
+                int cost = fuckyeah->weight;
                 if(distance[v1.id] + cost < distance[v2.id]){
                     distance[v2.id] = distance[v1.id] + cost;
                     heap.push(std::make_pair(distance[v2.id], v2.id));
@@ -209,12 +211,13 @@ std::vector<Vertex> dijkstra3(Vertex cliente, Graph myGraph, int k, int j){
         pathJ.push_back(buildPath(myGraph.vertices[resposta[i]], parent));
     }
 
-    for(int i=0; i < j, i++)
+    /*for(int i=0; i < j; i++)
     {
-        int l
-        pathJ[j][1]
-    }
-    
+        int l;
+        pathJ[j][1];
+    }*/
+    std::vector<Vertex> ret;
+    return ret;
 
 }
 

@@ -83,8 +83,9 @@ void Graph::addVertex(int id, int type) {
     numVertices++;
 }
 
-void Graph::addTemporalVertices(std::vector<std::tuple<int, int, float, int>> adress) {
+Vertex Graph::addTemporalVertices(std::vector<std::tuple<int, int, float, int>> adress) {
     // sorted matriz by
+    std::sort(adress.begin(), adress.end());
     std::vector<int> groups;
     groups.push_back(0);
     unsigned int numVerticesSameEdge = 0;
@@ -136,7 +137,14 @@ void Graph::addTemporalVertices(std::vector<std::tuple<int, int, float, int>> ad
         
         addEdge(vertices[numVertices-1], vertices[std::get<1>(adress[j])], (1-std::get<2>(adress[j+1]))*weight);
 
-    } 
+    }
+
+    for (auto x: vertices) {
+        if (x.type == 3) {
+            return x;
+        }
+    }
+    return Vertex();
 }
 
 /*

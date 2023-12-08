@@ -3,6 +3,7 @@
 #include <tuple>
 #include "Graph.h"
 #include "create_graph.h"
+#include "dijkstra.h"
 using namespace std;
 
 void tela()
@@ -111,6 +112,35 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, float, int>> &addre
                 transicao();
                 return false;
         }
+    case 3:
+        cout << "Opcao 3 - Inserir pedido e retornar entregadores proximos (operacao 1)" << endl;
+        if (address.size() == 0) {
+            cout << "Desculpe, nenhum entregador cadastrado." << endl;
+            transicao();
+            return false;
+        }
+        if (*ptrGraph == nullptr)
+        {
+            cout << "Nao ha rua cadastrada." << endl;
+            transicao();
+            return false;
+        }
+        int iVertice1, iVertice2;
+        float fWeight;
+        cout << "Indique o endereco de coleta do pedido:" << endl;
+        cin >> iVertice1 >> iVertice2 >> fWeight;
+        address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 3));
+        iniVertex = (*ptrGraph)->addTemporalVertices(address);
+        cout << "Insira o numero de entregadores proximos a serem encontrados:" << endl;
+        cin >> k;
+        resposta = dijkstra(iniVertex, **ptrGraph, k);
+        cout << "Os " << k << " entregadores mais proximos sao:" << endl;
+        for (int i = 0; i < k; i++)
+        {
+            cout << resposta[i] << endl;
+        }
+        transicao();
+        return false;
     default:
         cout << "Opcao invalida." << endl;
         transicao();

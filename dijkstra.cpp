@@ -15,7 +15,7 @@ std::vector<int> mergePaths(std::vector<int>, std::vector<int>);
 
 std::vector<int> findNClosest(Vertex initialVertex, Graph myGraph, int n)
 {
-    int numVertices = myGraph.numTemporalVertices; // numero de vertices no grafo (incluindo temporários)
+    int numVertices = myGraph.numVertices; // numero de vertices no grafo (incluindo temporários)
     std::vector<int> deliveryman (n); // entregadores mais próximos
     int count = 0; // conta entregadores encontrados
 

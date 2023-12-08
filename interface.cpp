@@ -23,7 +23,7 @@ void transicao()
     cin.get();
 }
 
-bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, float, int>> &address)
+bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &address)
 {
     int iOpcao, iOpcao2, k;
     vector<int> resposta;
@@ -126,7 +126,7 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, float, int>> &addre
             return false;
         }
         int iVertice1, iVertice2;
-        float fWeight;
+        double fWeight;
         cout << "Indique o endereco de coleta do pedido:" << endl;
         cin >> iVertice1 >> iVertice2 >> fWeight;
         address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 3));

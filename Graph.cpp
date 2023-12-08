@@ -36,7 +36,7 @@ void Graph::deleteTemporalVertices() {
     }
 }
 
-void Graph::addEdge(Vertex from, Vertex to, float weight) {
+void Graph::addEdge(Vertex from, Vertex to, double weight) {
     int id1 = from.id;
     int id2 = to.id;
 
@@ -75,6 +75,9 @@ void Graph::addVertex(int id, int type) {
 }
 
 void Graph::addTemporalVertices(std::vector<std::tuple<int, int, float, int>> address) {
+=======
+void Graph::addTemporalVertices(std::vector<std::tuple<int, int, double, int>> adress) {
+>>>>>>> Stashed changes
     // sorted matriz by
     heapSort(&address);
     std::vector<int> groups;
@@ -97,7 +100,7 @@ void Graph::addTemporalVertices(std::vector<std::tuple<int, int, float, int>> ad
         groups.push_back(numVerticesSameEdge);
     }
 
-    float weight = 0;
+    double weight = 0;
     for(unsigned int i = 0; i < groups.size() - 1; i++){
         int j = groups[i];
         Node* edgeNode = edges[std::get<0>(address[j])];

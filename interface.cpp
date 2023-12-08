@@ -135,14 +135,30 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
         //iterar para achar o vertice de coleta tipo
         for (int i = 0; i < (*ptrGraph)->numVertices; i++)
         {
-            if ((*ptrGraph)->vertices[i].id == 3)
+            if ((*ptrGraph)->vertices[i].type == 3)
             {
                 iniVertex = (*ptrGraph)->vertices[i];
                 break;
             }
         }
         cout << "Insira o numero de entregadores proximos a serem encontrados:" << endl;
-        cin >> k;
+        cin >> k;/*
+        cout << "Infos do grafo:\n";
+        cout << "numVertices: " << (*ptrGraph)->numVertices << endl;
+        for (auto x: (**ptrGraph).vertices)
+        {
+            cout << "id: " << x.id << " type: " << x.type << endl;
+        }
+        iOpcao2 = 0;
+        for (auto y: (**ptrGraph).edges)
+        {
+            cout << "vizinhos de " << iOpcao2++ << ": ";
+            while (y != nullptr) {
+                cout << y->vertexId << " ";
+                y = y->next;
+            }
+            cout << endl;
+        }*/
         resposta = findNClosest(iniVertex, **ptrGraph, k);
         cout << "Os " << k << " entregadores mais proximos sao:" << endl;
         for (int i = 0; i < k; i++)

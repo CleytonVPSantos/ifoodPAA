@@ -30,10 +30,6 @@ struct Node {
     Node* next;
 };
 
-
-
-bool operator==(const Vertex& lhs, const Vertex& rhs);
-
 // Struct representing a graph
 struct Graph {
     int numVertices = 0;
@@ -44,11 +40,8 @@ struct Graph {
     // Vector of edges of each vertex
     std::vector<Node*> edges; // first node is the first adjacent vertex
 
-    // Function to add a new vertex between two existing vertices with a weighted edge
-    void addVertexBetween(Vertex existingVertex1, Vertex existingVertex2, Vertex newVertex, float proportion);
-
     // Function to delete a vertex and its associated edges
-    void deleteVertexBetween(Vertex vertex);
+    void deleteTemporalVertices();
 
     // Function to add a new edge to the graph
     void addEdge(Vertex from, Vertex to, float weight);

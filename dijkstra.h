@@ -4,10 +4,10 @@
 #include <tuple>
 #include "Graph.h"
 
-std::vector<int> dijkstra(Vertex initialVertex, Graph myGraph, int k);
+std::vector<int> findNClosest(Vertex, Graph, int);
 
-std::vector<Vertex> dijkstra2(Vertex initialVertex, Graph myGraph, Vertex finalVertex);
+std::vector<int> dijkstraWithGoal(Vertex, Vertex, Graph);
 
-std::vector<int> buildPath(Vertex finalVertex, int parent[]);
+std::vector<int> buildPath(Vertex, int*);
 
-std::vector<Vertex> dijkstra3(Vertex cliente, Graph myGraph, int k, int j);
+std::vector<int> mergePaths(std::vector<int>, std::vector<int>);

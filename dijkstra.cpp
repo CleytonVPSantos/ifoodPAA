@@ -3,7 +3,7 @@
 #include <queue>
 #include <tuple>
 #include <limits>
-#include "Graph.h"
+#include "dijkstra.h"
 
 const int INF = std::numeric_limits<int>::max();
 
@@ -18,6 +18,54 @@ bool compare(std::pair<double, int> a, std::pair<double, int> b){
     if (a.first == b.first) return a.second > b.second;
     return a.first > b.first;
 }
+
+std::vector<int> findNClosest(Vertex initialVertex, Graph myGraph, int n)
+{
+    int numVertices = myGraph.numVertices; // numero de vertices no grafo (incluindo temporários)
+    std::vector<int> deliveryman (n); // entregadores mais próximos
+    int count = 0; // conta entregadores encontrados
+
+    // inicialização do Dijkstra
+    std::priority_queue<std::pair<double, int>, std::vector<std::pair<double, int>>,
+                        decltype(&compare) > heap(compare);
+    bool visited[numVertices];
+    double distance[numVertices], cost;
+    for(int i = 0; i < numVertices; i++){
+        visited[i] = false;
+        distance[i] = -1;
+    }
+    distance[initialVertex.id] = 0;
+    heap.push(std::make_pair(distance[initialVertex.id], initialVertex.id));
+
+    // the magic is done here
+    while(!heap.empty() && count < n){
+        Vertex v1 = myGraph.vertices[heap.top().second]; 
+        heap.pop();
+        if (visited[v1.id]) continue;
+        if(distance[v1.id] == -1) { break; }
+        Node* edges = myGraph.edges[v1.id];
+        while(edges){
+            Vertex v2 = myGraph.vertices[edges->vertexId];
+            if(!visited[v2.id]) {
+                cost = edges->weight;
+                if((distance[v1.id] + cost < distance[v2.id]) || distance[v2.id] == -1){
+                    distance[v2.id] = distance[v1.id] + cost;
+                    heap.push(std::make_pair(distance[v2.id], v2.id));
+                }
+            }
+            edges = edges->next;
+        }
+        visited[v1.id] = true;
+
+        // checa se o vértice que checamos é entregador
+        if(v1.type == 1){
+            deliveryman[count] = v1.id;
+            count++;
+        }
+    }   
+    return deliveryman;
+}
+
 
 std::vector<std::vector<int>> pathsOfNClosest(Vertex initialVertex, Graph myGraph, int n){
     int numVertices = myGraph.numVertices; // numero de vertices no grafo (incluindo temporários)
@@ -158,7 +206,7 @@ std::vector<std::tuple<int, int, std::vector<int>>> optmizedDelivery(Vertex cost
     {
         myGraph.addEdge(myGraph.vertices[pathsToCenters[i].first[-1]], pseudocostumer, pathsToCenters[i].second);
     }   
-    std::vector<std::vector<int>> nClosest = pathOfNClosest(pseudocostumer, myGraph, n);
+    std::vector<std::vector<int>> nClosest = pathsOfNClosest(pseudocostumer, myGraph, n);
     for(int i = 0; i < n; i++){
         for(int j = 0; j < numDCs; j++){
             if(pathsToCenters[j].first[-1] == nClosest[i][1])

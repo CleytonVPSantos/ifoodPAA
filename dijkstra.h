@@ -2,7 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <tuple>
-#include "Graph.h"
+#include "graph.h"
 
 bool compare(std::pair<double, int> a, std::pair<double, int> b);
 

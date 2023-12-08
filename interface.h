@@ -8,6 +8,6 @@ void tela();
 
 void transicao();
 
-bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, float, int>> &address);
+bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &address);
 
 #endif

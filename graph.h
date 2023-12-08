@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <tuple>
+#include "sort.h"
 
 
 
@@ -26,7 +27,7 @@ struct Vertex {
 
 struct Node {
     int vertexId;
-    float weight;
+    double weight;
     Node* next;
 };
 
@@ -44,12 +45,12 @@ struct Graph {
     void deleteTemporalVertices();
 
     // Function to add a new edge to the graph
-    void addEdge(Vertex from, Vertex to, float weight);
+    void addEdge(Vertex from, Vertex to, double weight);
 
     // Function to add a new vertex to the graph
     void addVertex(int id, int type);
 
-    void addTemporalVertices(std::vector<std::tuple<int, int, float, int>> adress);
+    void addTemporalVertices(std::vector<std::tuple<int, int, double, int>>* address);
 
 };
 

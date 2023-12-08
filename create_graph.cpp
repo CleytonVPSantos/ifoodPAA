@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include "Graph.h"
+#include "graph.h"
 
 using namespace std;
 
@@ -31,7 +31,7 @@ struct Graph* constructGraphFromFile(const string& strFileName)
     inputFile >> numVertices;
     struct Graph* ptrGraph = newGraph(numVertices);
     int iVertex1, iVertex2;
-    float fWeight;
+    double fWeight;
     // Lê os dados do arquivo e insere-os na árvore
     while (inputFile >> iVertex1 >> iVertex2 >> fWeight)
     {
@@ -51,7 +51,7 @@ struct Graph* constructGraphFromUserInput()
     cin >> numArestas;
     struct Graph* ptrGraph = newGraph(numVertices);
     int iVertex1, iVertex2;
-    float fWeight;
+    double fWeight;
     cout << "Nas proximas " << numArestas << " linhas, digite o vertice 1, o vertice 2 e o peso da aresta, separados por espaco:" << endl;
     for (int i = 0; i < numArestas; i++)
     {
@@ -61,11 +61,11 @@ struct Graph* constructGraphFromUserInput()
     return ptrGraph;
 }
 
-vector<tuple<int, int, float, int>> constructAddressFromFile(const string& strFileName)
+vector<tuple<int, int, double, int>> constructAddressFromFile(const string& strFileName)
 {
     // Abre o arquivo
     ifstream inputFile(strFileName);
-    vector<tuple<int, int, float, int>> ret;
+    vector<tuple<int, int, double, int>> ret;
     // Se o arquivo não puder ser aberto, uma mensagem de erro será exibida
     if (!inputFile.is_open())
     {
@@ -73,7 +73,7 @@ vector<tuple<int, int, float, int>> constructAddressFromFile(const string& strFi
         return ret;
     }
     int iVertex1, iVertex2, iType;
-    float fWeight;
+    double fWeight;
     while (inputFile >> iVertex1 >> iVertex2 >> fWeight)
     {
         ret.push_back(make_tuple(iVertex1, iVertex2, fWeight, 1));
@@ -83,14 +83,14 @@ vector<tuple<int, int, float, int>> constructAddressFromFile(const string& strFi
     return ret;
 }
 
-vector<tuple<int, int, float, int>> constructAddressFromUserInput()
+vector<tuple<int, int, double, int>> constructAddressFromUserInput()
 {
     int numAdress;
     cout << "Digite o numero de enderecos: ";
     cin >> numAdress;
-    vector<tuple<int, int, float, int>> ret;
+    vector<tuple<int, int, double, int>> ret;
     int iVertex1, iVertex2;
-    float fWeight;
+    double fWeight;
     cout << "Nas proximas " << numAdress << " linhas, digite o vertice 1, o vertice 2 e a fracao em que o entregador se encontra do comeco da rua, separados por espaco:" << endl;
     for (int i = 0; i < numAdress; i++)
     {

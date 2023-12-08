@@ -2,7 +2,7 @@
 #include <vector>
 #include <tuple>
 #include "interface.h"
-#include "Graph.h"
+#include "graph.h"
 
 using namespace std;
 
@@ -10,7 +10,7 @@ int main()
 {
     bool bExit = false;
     struct Graph *ptrGraphCity = nullptr;
-    vector<tuple<int, int, float, int>> address;
+    vector<tuple<int, int, double, int>> address;
     while (!bExit)
     {
         tela();

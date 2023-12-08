@@ -7,6 +7,17 @@
 
 const int INF = std::numeric_limits<int>::max();
 
+std::vector<int> findNClosest(Vertex, Graph, int);
+std::vector<int> dijkstraWithGoal(Vertex, Vertex, Graph);
+std::vector<int> buildPath(Vertex, int*);
+std::vector<int> mergePaths(std::vector<int>, std::vector<int>);
+
+bool compare(std::pair<double, int> a, std::pair<double, int> b){
+    if (a.first == -1) return true;
+    if (b.first == -1) return false;
+    if (a.first == b.first) return a.second > b.second;
+    return a.first > b.first;
+}
 
 std::vector<std::vector<int>> pathsOfNClosest(Vertex initialVertex, Graph myGraph, int n){
     int numVertices = myGraph.numVertices; // numero de vertices no grafo (incluindo temporários)
@@ -14,15 +25,15 @@ std::vector<std::vector<int>> pathsOfNClosest(Vertex initialVertex, Graph myGrap
     int count = 0; // conta entregadores encontrados
 
     // inicialização do Dijkstra
-    std::priority_queue<std::pair<float, int>, std::vector<std::pair<float, int>>,  // min heap
-                        std::greater<std::pair<float, int>> > heap;
+    std::priority_queue<std::pair<double, int>, std::vector<std::pair<double, int>>,
+                        decltype(&compare) > heap(compare);
     bool visited[numVertices];
     int parent[numVertices];
-    float distance[numVertices];  
+    float distance[numVertices], cost;
     for(int i = 0; i < numVertices; i++){
         visited[i] = false;
+        distance[i] = -1;
         parent[i] = -1;
-        distance[i] = INF;
     }
     parent[initialVertex.id] = initialVertex.id;
     distance[initialVertex.id] = 0;
@@ -32,14 +43,14 @@ std::vector<std::vector<int>> pathsOfNClosest(Vertex initialVertex, Graph myGrap
     while(!heap.empty() && count < n){
         Vertex v1 = myGraph.vertices[heap.top().second]; 
         heap.pop();
-        if(visited[v1.id]) continue;
-        if(distance[v1.id] == INF) break; 
+        if (visited[v1.id]) continue;
+        if(distance[v1.id] == -1) { break; }
         Node* edges = myGraph.edges[v1.id];
         while(edges){
             Vertex v2 = myGraph.vertices[edges->vertexId];
             if(!visited[v2.id]) {
-                int cost = edges->weight;
-                if(distance[v1.id] + cost < distance[v2.id]){
+                cost = edges->weight;
+                if((distance[v1.id] + cost < distance[v2.id]) || distance[v2.id] == -1){
                     distance[v2.id] = distance[v1.id] + cost;
                     heap.push(std::make_pair(distance[v2.id], v2.id));
                 }

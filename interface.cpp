@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <tuple>
-#include "Graph.h"
+#include "graph.h"
 #include "create_graph.h"
 #include "dijkstra.h"
 using namespace std;
@@ -23,9 +23,10 @@ void transicao()
     cin.get();
 }
 
-bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, float, int>> &address)
+bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &address)
 {
-    int iOpcao, iOpcao2, k;
+    int iOpcao, iOpcao2, k, numEsquinas;
+    tuple<int, int, double, int> entregador;
     vector<int> resposta;
     Vertex iniVertex;
     
@@ -126,28 +127,48 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, float, int>> &addre
             return false;
         }
         int iVertice1, iVertice2;
-        float fWeight;
+        double fWeight;
         cout << "Indique o endereco de coleta do pedido:" << endl;
         cin >> iVertice1 >> iVertice2 >> fWeight;
         address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 3));
         //Ordenar adress
-        (*ptrGraph)->addTemporalVertices(address);
+        (*ptrGraph)->addTemporalVertices(&address);
         //iterar para achar o vertice de coleta tipo
         for (int i = 0; i < (*ptrGraph)->numVertices; i++)
         {
-            if ((*ptrGraph)->vertices[i].id == 3)
+            if ((*ptrGraph)->vertices[i].type == 3)
             {
                 iniVertex = (*ptrGraph)->vertices[i];
                 break;
             }
         }
         cout << "Insira o numero de entregadores proximos a serem encontrados:" << endl;
-        cin >> k;
-        resposta = dijkstra(iniVertex, **ptrGraph, k);
-        cout << "Os " << k << " entregadores mais proximos sao:" << endl;
+        cin >> k;/*
+        cout << "Infos do grafo:\n";
+        cout << "numVertices: " << (*ptrGraph)->numVertices << endl;
+        for (auto x: (**ptrGraph).vertices)
+        {
+            cout << "id: " << x.id << " type: " << x.type << endl;
+        }
+        iOpcao2 = 0;
+        for (auto y: (**ptrGraph).edges)
+        {
+            cout << "vizinhos de " << iOpcao2++ << ": ";
+            while (y != nullptr) {
+                cout << y->vertexId << " ";
+                y = y->next;
+            }
+            cout << endl;
+        }*/
+        resposta = findNClosest(iniVertex, **ptrGraph, k);
+        (**ptrGraph).deleteTemporalVertices();
+        numEsquinas = (**ptrGraph).numVertices;
+        cout << "Os " << k << " entregadores mais proximos estao nos enderecos:" << endl;
         for (int i = 0; i < k; i++)
         {
-            cout << resposta[i] << endl;
+            entregador = address[resposta[i] - numEsquinas];
+            cout << "(" << get<0>(entregador) << ", " << get<1>(entregador) << ", "
+                 << get<2>(entregador) << ")" << endl;
         }
         transicao();
         return false;

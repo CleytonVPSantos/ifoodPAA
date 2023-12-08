@@ -130,7 +130,17 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, float, int>> &addre
         cout << "Indique o endereco de coleta do pedido:" << endl;
         cin >> iVertice1 >> iVertice2 >> fWeight;
         address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 3));
-        iniVertex = (*ptrGraph)->addTemporalVertices(address);
+        //Ordenar adress
+        (*ptrGraph)->addTemporalVertices(address);
+        //iterar para achar o vertice de coleta tipo
+        for (int i = 0; i < (*ptrGraph)->numVertices; i++)
+        {
+            if ((*ptrGraph)->vertices[i].id == 3)
+            {
+                iniVertex = (*ptrGraph)->vertices[i];
+                break;
+            }
+        }
         cout << "Insira o numero de entregadores proximos a serem encontrados:" << endl;
         cin >> k;
         resposta = dijkstra(iniVertex, **ptrGraph, k);

@@ -25,10 +25,11 @@ void transicao()
 
 bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &address)
 {
-    int iOpcao, iOpcao2, k, numEsquinas;
+    int iOpcao, iOpcao2, k, numEsquinas, numDCs;
     tuple<int, int, double, int> entregador;
     vector<int> resposta;
-    Vertex iniVertex;
+    vector< tuple< int, int, vector<int> > > respostaTupla;
+    Vertex iniVertex, vtxEntregador, vtxColeta, vtxCliente;
     
     string strFileName, strConfirma;
     
@@ -170,6 +171,75 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
             cout << "(" << get<0>(entregador) << ", " << get<1>(entregador) << ", "
                  << get<2>(entregador) << ")" << endl;
         }
+        transicao();
+        return false;
+    case 4:
+        cout << "Opcao 4 - Definir rota dado pedido e entregador (operacao 2)" << endl;
+        if (*ptrGraph == nullptr)
+        {
+            cout << "Nao ha rua cadastrada." << endl;
+            transicao();
+            return false;
+        }
+        cout << "Insira o endereco em que se encontra o entregador:" << endl;
+        cin >> iVertice1 >> iVertice2 >> fWeight;
+        address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 1));
+        cout << "Insira o endereco de coleta do pedido:" << endl;
+        cin >> iVertice1 >> iVertice2 >> fWeight;
+        address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 3));
+        cout << "Insira o endereco de entrega do pedido:" << endl;
+        cin >> iVertice1 >> iVertice2 >> fWeight;
+        address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 2));
+        (*ptrGraph)->addTemporalVertices(&address);
+        for (auto x: (**ptrGraph).vertices) {
+            if (x.type == 1)
+                vtxEntregador = x;
+            else if (x.type == 3)
+                vtxColeta = x;
+            else if (x.type == 2)
+                vtxCliente = x;
+        }
+        resposta = simpleDelivery(vtxEntregador, vtxColeta, vtxCliente, **ptrGraph);
+        (**ptrGraph).deleteTemporalVertices();
+        numEsquinas = resposta.size();
+        cout << "A rota do entregador e:" << endl;
+        for (int i = 0; i < numEsquinas - 1; i++)
+            cout << resposta[i] << " --> ";
+        cout << resposta[numEsquinas - 1] << endl;
+        transicao();
+        return false;
+    case 5:
+        cout << "Opcao 5 - Buscar rota via centro de distribuicao (operacao 3)" << endl;
+        if (*ptrGraph == nullptr)
+        {
+            cout << "Nao ha rua cadastrada." << endl;
+            transicao();
+            return false;
+        }
+        if (address.size() == 0) {
+            cout << "Desculpe, nenhum entregador cadastrado." << endl;
+            transicao();
+            return false;
+        }
+        cout << "Insira a quantidade de centros de distribuicao para esse pedido:" << endl;
+        cin >> numDCs;
+        cout << "Nas proximas " << numDCs << " linhas, insira o endereco de cada centro de distribuicao:" << endl;
+        for (int i = 0; i < numDCs; i++) {
+            cin >> iVertice1 >> iVertice2 >> fWeight;
+            address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 4));
+        }
+        cout << "Insira o endereco de coleta do pedido:" << endl;
+        cin >> iVertice1 >> iVertice2 >> fWeight;
+        address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 2));
+        cout << "Insira o numero de entregadores proximos a serem encontrados:" << endl;
+        cin >> k;
+        (*ptrGraph)->addTemporalVertices(&address);
+        for (auto x: (**ptrGraph).vertices) {
+            if (x.type == 2)
+                vtxCliente = x;
+        }
+        respostaTupla = optmizedDelivery(vtxCliente, **ptrGraph, k);
+        (**ptrGraph).deleteTemporalVertices();
         transicao();
         return false;
     default:

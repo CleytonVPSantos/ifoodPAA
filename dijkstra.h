@@ -12,9 +12,7 @@ std::vector<int> findNClosest(Vertex, Graph, int);
 
 dijkstra_type dijkstra(Vertex, Vertex, Graph, int, int);
 
-std::vector<std::vector<int>> pathsOfNClosest(Vertex, Graph, int);
-
-std::vector<int> dijkstraWithGoal(Vertex, Vertex, Graph);
+std::vector<std::pair<std::vector<int>, int>> pathsOfNClosest(Vertex, Graph, int);
 
 std::vector<int> mergePaths(std::vector<int>, std::vector<int>);
 
@@ -26,6 +24,4 @@ std::vector<int> mergePaths(std::vector<int>, std::vector<int>);
 
 std::vector<std::tuple<int, int, std::vector<int>>> optmizedDelivery(Vertex, Graph, int);
 
-std::vector<std::pair<std::vector<int>, float>> pathToEachCenter(Vertex, Graph);
-
-int countDistributionCenters(Graph);
+std::vector<std::pair<std::vector<int>, double>> pathToEachCenter(Vertex, Graph);

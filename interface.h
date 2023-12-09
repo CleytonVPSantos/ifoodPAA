@@ -5,12 +5,12 @@
 
 using namespace std;
 
-void tela();
+void screen();
 
-void transicao();
+void transition();
 
-void tempoExec(chrono::duration<double, milli> timeDuration);
+void execTime(chrono::duration<double, milli> timeDuration);
 
-bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &address);
+bool choose(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &address);
 
 #endif

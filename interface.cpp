@@ -258,6 +258,7 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
         (**ptrGraph).deleteTemporalVertices();
         numEsquinas = (**ptrGraph).numVertices;
         k = respostaTupla.size();
+        cout << "===============" << endl;
         for (int i = 0; i < k; i++) {
             cout << "Caminho encontrado!\n";
             endereco = address[get<0>(respostaTupla[i]) - numEsquinas];

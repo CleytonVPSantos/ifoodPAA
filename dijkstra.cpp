@@ -19,14 +19,13 @@ bool compare(std::pair<double, int> a, std::pair<double, int> b){
 
 
 dijkstra_type dijkstra(Vertex initialVertex, Vertex finalVertex, Graph myGraph, int n, int operation){
-    int numVertices = myGraph.numVertices; // numero de vertices no grafo (incluindo temporários)
-    std::vector<int> deliveryman (n); // entregadores mais próximos
-    int count = 0; // conta entregadores encontrados
+    int numVertices = myGraph.numVertices; // number of vertex (including temporary)
+    std::vector<int> deliveryman (n); // closest deliverymen
+    int count = 0; // counts deliverymen
 
-    // inicialização do Dijkstra
+    // Dijkstra initialization
     std::priority_queue<std::pair<double, int>, std::vector<std::pair<double, int>>,
                         decltype(&compare) > heap(compare);
-
     std::vector<int> parent (numVertices);
     bool visited[numVertices];
     std::vector<double> distance (numVertices);
@@ -54,28 +53,28 @@ dijkstra_type dijkstra(Vertex initialVertex, Vertex finalVertex, Graph myGraph, 
                 cost = node.weight;
                 if((distance[v1.id] + cost < distance[v2.id]) || distance[v2.id] == -1){
                     distance[v2.id] = distance[v1.id] + cost;
-                    heap.push(std::make_pair(distance[v2.id], v2.id));
                     parent[v2.id] = v1.id; 
+                    heap.push(std::make_pair(distance[v2.id], v2.id));
                 }
             }
         }
         visited[v1.id] = true;
 
-        // ações especiais que variam com a operação realizada
+        // especial actions (depending on the operation - fifth argument)
         if(operation == 0){
-            // checa se o vértice que checamos é entregador
+            // checks if the vertex is a deliveryman
             if(v1.type == 1){
                 deliveryman[count] = v1.id;
                 count++;
             }
         }
         else if(operation == 1){
-            // checa se chegamos no vértice final
+            // checks if we are in the final vertex
             if(v1.id == finalVertex.id)
                 break;
         }
         else if(operation == 2){
-            // checa se é um centro de distribuição 
+            // checks if it is a distribution center
            if(myGraph.vertices[v1.id].type == 4)
                 centers.push_back(v1.id); 
         }
@@ -84,6 +83,8 @@ dijkstra_type dijkstra(Vertex initialVertex, Vertex finalVertex, Graph myGraph, 
 }
 
 
+
+// receives a vector and returns the vector backwards
 std::vector<int> invertVector(std::vector<int> myVector){
     int n = myVector.size();
     std::vector<int> inverted (n);
@@ -95,6 +96,7 @@ std::vector<int> invertVector(std::vector<int> myVector){
 
 
 
+// receives a vertex, a graph and a vector of parents and returns the dijkstra's path to the given vertex
 std::vector<int> buildPath(Vertex finalVertex, Graph myGraph, std::vector<int> parent){ 
     int i = finalVertex.id;
     std::vector<int> reversePath;
@@ -102,7 +104,7 @@ std::vector<int> buildPath(Vertex finalVertex, Graph myGraph, std::vector<int> p
     i = parent[i];
     while(parent[i] != i)
     {
-        if(myGraph.vertices[i].type == 0)
+        if(myGraph.vertices[i].type == 0) // ignores temporary vertex (deliverymen, DCs, stores)
             reversePath.push_back(i);
         i = parent[i];
     }
@@ -113,6 +115,7 @@ std::vector<int> buildPath(Vertex finalVertex, Graph myGraph, std::vector<int> p
 
 
 
+// receives two vectors and merge them 
 std::vector<int> mergePaths(std::vector<int> first, std::vector<int> second){
     for(int i = 0; i < second.size(); i++){
         first.push_back(second[i]);
@@ -122,6 +125,7 @@ std::vector<int> mergePaths(std::vector<int> first, std::vector<int> second){
 
 
 
+// solver Problem 1 - finds the n closest deliverymen to a given vertex (a store) 
 std::vector<int> findNClosest(Vertex initialVertex, Graph myGraph, int n)
 {
     return std::get<0> (dijkstra(initialVertex, initialVertex, myGraph, n, 0));
@@ -129,34 +133,40 @@ std::vector<int> findNClosest(Vertex initialVertex, Graph myGraph, int n)
 
 
 
+// solves Problem 2 - finds the shortest paths deliveryman-store, store-costumer and merges them
 std::vector<int> simpleDelivery(Vertex deliveryman, Vertex store, Vertex costumer, Graph myGraph){
     std::vector<int> parentStore = buildPath(store, myGraph, std::get<1> (dijkstra(deliveryman, store, myGraph, 1, 1)));
     std::vector<int> parentCostumer = buildPath(costumer, myGraph, std::get<1> (dijkstra(store, costumer, myGraph, 1, 1)));
-    parentCostumer.erase(parentCostumer.begin());
+    parentCostumer.erase(parentCostumer.begin()); // the store's vertex is in both paths
     
     return mergePaths(parentStore, parentCostumer);
 }
 
 
 
+// finds the paths of the N closest deliverymen to a given vertex passing in a DC
+// the DC will always be the second vertex in the path (this is used in Problem 3)
 std::vector<std::pair<std::vector<int>, int>> pathsOfNClosest(Vertex initialVertex, Graph myGraph, int n){
-
     std::vector<std::pair<std::vector<int>, int>> deliverymanPath; // entregadores mais próximos
     dijkstra_type dijkstraData = dijkstra(initialVertex, initialVertex, myGraph, n, 0);
     std::vector<int> deliveryman = std::get<0> (dijkstraData);
     std::vector<int> parent = std::get<1> (dijkstraData);
-    int DC;
+    int DC; // to store the used DC
     for(int i = 0; i < deliveryman.size(); i++){
+        // finds the used DC
         DC = deliveryman[i];
         while(parent[DC] != parent[parent[DC]])
             DC = parent[DC];
+
         deliverymanPath.push_back(std::make_pair(buildPath(myGraph.vertices[deliveryman[i]], myGraph, parent), DC));
     } 
     return deliverymanPath;
 }
 
 
- 
+
+// finds the closest path to each DC given a vertex (deliveryman)
+// returns the pair (path, path_length)
 std::vector<std::pair<std::vector<int>, double>> pathToEachCenter(Vertex initialVertex, Graph myGraph){
     std::vector<std::pair<std::vector<int>, double>> paths;
     dijkstra_type dijkstraData = dijkstra(initialVertex, initialVertex, myGraph, 1, 2);

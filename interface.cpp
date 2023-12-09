@@ -1,10 +1,12 @@
 #include <iostream>
 #include <vector>
+#include <chrono>
 #include <tuple>
 #include "graph.h"
 #include "create_graph.h"
 #include "dijkstra.h"
 using namespace std;
+using namespace std::chrono;
 
 void tela()
 {
@@ -23,6 +25,10 @@ void transicao()
     cin.get();
 }
 
+void execTime(chrono::duration<double, milli> timeDuration) {
+    cout << "Tempo de execucao: " << timeDuration.count() << "milissegundos." << endl;
+}
+
 bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &address)
 {
     int iOpcao, iOpcao2, k, numEsquinas, numDCs;
@@ -32,6 +38,10 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
     Vertex iniVertex, vtxEntregador, vtxColeta, vtxCliente;
     
     string strFileName, strConfirma;
+    
+    auto timeStart = high_resolution_clock::now();
+    auto timeStop = high_resolution_clock::now();
+    auto timeDuration = duration<double, milli>(timeStop - timeStart);
     
     cin >> iOpcao;
     switch (iOpcao)
@@ -54,6 +64,17 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
         }
     case 1:
         cout << "Opcao 1 - Inserir informacoes sobre a cidade (input de ruas)" << endl;
+        if ((**ptrGraph).numVertices != 0)
+        {
+            cout << "Ja ha uma ruas cadastradas. Deseja sobrescrever? (S/N)" << endl;
+            cin >> strConfirma;
+            if (strConfirma == "N")
+            {
+                cout << "Operacao cancelada." << endl;
+                transicao();
+                return false;
+            }
+        }
         cout << "Voce gostaria de fazer o input via arquivo (0) ou via terminal (1)?" << endl;
         cin >> iOpcao2;
         switch (iOpcao2)
@@ -61,10 +82,14 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
             case 0:
                 cout << "Insira o nome do arquivo:" << endl;
                 cin >> strFileName;
+                timeStart = high_resolution_clock::now();
                 *ptrGraph = (Graph*)constructGraphFromFile(strFileName);
+                timeStop = high_resolution_clock::now();
+                timeDuration = duration<double, milli>(timeStop - timeStart);
                 if (*ptrGraph != nullptr)
                 {
                     cout << "Grafo criado com sucesso!" << endl;
+                    execTime(timeDuration);
                     transicao();
                 }
                 else
@@ -93,6 +118,18 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
         }
     case 2:
         cout << "Opcao 2 - Inserir informacoes sobre entregadores" << endl;
+        if (address.size() != 0)
+        {
+            cout << "Ja ha entregadores cadastrados. Deseja sobrescrever? (S/N)" << endl;
+            cin >> strConfirma;
+            if (strConfirma == "N")
+            {
+                cout << "Operacao cancelada." << endl;
+                transicao();
+                return false;
+            }
+        }
+        address = vector<tuple<int, int, double, int>>();
         cout << "Voce gostaria de fazer o input via arquivo (0) ou via terminal (1)?" << endl;
         cin >> iOpcao2;
         switch (iOpcao2)
@@ -100,8 +137,12 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
             case 0:
                 cout << "Insira o nome do arquivo:" << endl;
                 cin >> strFileName;
+                timeStart = high_resolution_clock::now();
                 address = constructAddressFromFile(strFileName);
+                timeStop = high_resolution_clock::now();
+                timeDuration = duration<double, milli>(timeStop - timeStart);
                 cout << "Entregadores adicionados!" << endl;
+                execTime(timeDuration);
                 transicao();
                 return false;
             case 1:
@@ -161,7 +202,10 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
             }
             cout << endl;
         }*/
+        timeStart = high_resolution_clock::now();
         resposta = findNClosest(iniVertex, **ptrGraph, k);
+        timeStop = high_resolution_clock::now();
+        timeDuration = duration<double, milli>(timeStop - timeStart);
         (**ptrGraph).deleteTemporalVertices();
         numEsquinas = (**ptrGraph).numVertices;
         cout << "Os " << k << " entregadores mais proximos estao nos enderecos:" << endl;
@@ -171,10 +215,23 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
             cout << "(" << get<0>(entregador) << ", " << get<1>(entregador) << ", "
                  << get<2>(entregador) << ")" << endl;
         }
+        execTime(timeDuration);
         transicao();
         return false;
     case 4:
         cout << "Opcao 4 - Definir rota dado pedido e entregador (operacao 2)" << endl;
+        if (address.size() != 0) {
+            cout << "AVISO: Essa operacao sobrescreve a lista de entregadores." << endl;
+            cout << "Deseja continuar? (S/N)" << endl;
+            cin >> strConfirma;
+            if (strConfirma == "N")
+            {
+                cout << "Operacao cancelada." << endl;
+                transicao();
+                return false;
+            }
+            address = vector<tuple<int, int, double, int>>();
+        }
         if (*ptrGraph == nullptr)
         {
             cout << "Nao ha rua cadastrada." << endl;
@@ -190,6 +247,7 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
         cout << "Insira o endereco de entrega do pedido:" << endl;
         cin >> iVertice1 >> iVertice2 >> fWeight;
         address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 2));
+        timeStart = high_resolution_clock::now();
         (*ptrGraph)->addTemporalVertices(&address);
         for (auto x: (**ptrGraph).vertices) {
             if (x.type == 1)
@@ -200,6 +258,8 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
                 vtxCliente = x;
         }
         resposta = simpleDelivery(vtxEntregador, vtxColeta, vtxCliente, **ptrGraph);
+        timeStop = high_resolution_clock::now();
+        timeDuration = duration<double, milli>(timeStop - timeStart);
         (**ptrGraph).deleteTemporalVertices();
         numEsquinas = (**ptrGraph).numVertices;
         cout << "A rota do entregador e:" << endl;
@@ -222,6 +282,7 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
         else {
             cout << resposta[resposta.size() - 1] << endl;
         }
+        execTime(timeDuration);
         transicao();
         return false;
     case 5:
@@ -249,15 +310,19 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
         address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 2));
         cout << "Insira o numero de entregadores proximos a serem encontrados:" << endl;
         cin >> k;
+        timeStart = high_resolution_clock::now();
         (*ptrGraph)->addTemporalVertices(&address);
         for (auto x: (**ptrGraph).vertices) {
             if (x.type == 2)
                 vtxCliente = x;
         }
         respostaTupla = optmizedDelivery(vtxCliente, **ptrGraph, k);
+        timeStop = high_resolution_clock::now();
+        timeDuration = duration<double, milli>(timeStop - timeStart);
         (**ptrGraph).deleteTemporalVertices();
         numEsquinas = (**ptrGraph).numVertices;
         k = respostaTupla.size();
+        cout << "===============" << endl;
         for (int i = 0; i < k; i++) {
             cout << "Caminho encontrado!\n";
             endereco = address[get<0>(respostaTupla[i]) - numEsquinas];
@@ -286,6 +351,7 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
             }
             cout << "===============" << endl;
         }
+        execTime(timeDuration);
         transicao();
         return false;
     default:

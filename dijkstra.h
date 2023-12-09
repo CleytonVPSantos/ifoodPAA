@@ -25,3 +25,5 @@ std::vector<int> mergePaths(std::vector<int>, std::vector<int>);
 std::vector<std::tuple<int, int, std::vector<int>>> optmizedDelivery(Vertex, Graph, int);
 
 std::vector<std::pair<std::vector<int>, double>> pathToEachCenter(Vertex, Graph);
+
+std::vector<int> invertVector(std::vector<int>);

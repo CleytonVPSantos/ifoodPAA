@@ -84,6 +84,16 @@ dijkstra_type dijkstra(Vertex initialVertex, Vertex finalVertex, Graph myGraph, 
 }
 
 
+std::vector<int> invertVector(std::vector<int> myVector){
+    int n = myVector.size();
+    std::vector<int> inverted (n);
+    for(int i = 1; i <= n; i++){
+        inverted[i-1] = myVector[n-i];
+    }
+    return inverted;
+}
+
+
 
 std::vector<int> buildPath(Vertex finalVertex, Graph myGraph, std::vector<int> parent){ 
     int i = finalVertex.id;
@@ -97,12 +107,8 @@ std::vector<int> buildPath(Vertex finalVertex, Graph myGraph, std::vector<int> p
         i = parent[i];
     }
     reversePath.push_back(i);
-    int n = reversePath.size();
-    std::vector<int> path (n);
-    for(int i = 1; i <= n; i++){
-        path[i-1] = reversePath[n-i];
-    } 
-    return path;
+
+    return invertVector(reversePath);
 }
 
 
@@ -136,7 +142,6 @@ std::vector<int> simpleDelivery(Vertex deliveryman, Vertex store, Vertex costume
 std::vector<std::pair<std::vector<int>, int>> pathsOfNClosest(Vertex initialVertex, Graph myGraph, int n){
 
     std::vector<std::pair<std::vector<int>, int>> deliverymanPath; // entregadores mais próximos
-    printf("%i!!", initialVertex.id);
     dijkstra_type dijkstraData = dijkstra(initialVertex, initialVertex, myGraph, n, 0);
     std::vector<int> deliveryman = std::get<0> (dijkstraData);
     std::vector<int> parent = std::get<1> (dijkstraData);
@@ -151,7 +156,7 @@ std::vector<std::pair<std::vector<int>, int>> pathsOfNClosest(Vertex initialVert
 }
 
 
-
+ 
 std::vector<std::pair<std::vector<int>, double>> pathToEachCenter(Vertex initialVertex, Graph myGraph){
     std::vector<std::pair<std::vector<int>, double>> paths;
     dijkstra_type dijkstraData = dijkstra(initialVertex, initialVertex, myGraph, 1, 2);
@@ -168,24 +173,26 @@ std::vector<std::pair<std::vector<int>, double>> pathToEachCenter(Vertex initial
 
 
 
+// finds the n closest deliveryman (to a given costumer) (only paths passing in a DC are considered)
 std::vector<std::tuple<int, int, std::vector<int>>> optmizedDelivery(Vertex costumer, Graph myGraph, int n){
     std::vector<std::tuple<int, int, std::vector<int>>> nOptimal;
     int numVertices = myGraph.numVertices;
-    // caminhos ótimos cliente-CD
+    // DC-costumer optimal paths
     std::vector<std::pair<std::vector<int>, double>> pathsToCenters = pathToEachCenter(costumer, myGraph); 
     int numDCs = pathsToCenters.size();
 
-    // cria um vertice "falso" para calcular os n entregadores mais proximos que passam por CD
+    // creates a false vertex to calculate the n closest deliverymen (with paths passing in a DC)
     myGraph.addVertex(numVertices, 10);
     Vertex pseudocostumer = myGraph.vertices[numVertices];
     for(int i = 0; i < numDCs; i++)
     {
         myGraph.addEdge(myGraph.vertices[pathsToCenters[i].first[pathsToCenters[i].first.size()-1]], pseudocostumer, pathsToCenters[i].second);
     }   
-    // entregadores mais proximos do cliente passando por um CD (caminhos CD-entregador)
+ 
+    // closest deliverymen (paths passing in a DC) (DC-deliveryman paths)
     std::vector<std::pair<std::vector<int>, int>> nClosestPaths = pathsOfNClosest(pseudocostumer, myGraph, n); 
 
-    // encontra por qual CD cada caminho para cada entregador passa e junta os caminhos cliente-CD, CD-entregador
+    // finds with DC each path uses and merges the paths costumer-DC, DC-deliveryman 
     for(int i = 0; i < n; i++){
         for(int j = 0; j < numDCs; j++){
             int size = pathsToCenters[j].first.size();
@@ -193,12 +200,14 @@ std::vector<std::tuple<int, int, std::vector<int>>> optmizedDelivery(Vertex cost
             {
                 int deliveryman = nClosestPaths[i].first[nClosestPaths[i].first.size()-1];
                 int usedCenter = nClosestPaths[i].second;
-                nClosestPaths[i].first.erase(nClosestPaths[i].first.begin()); // remove o vértice falso do caminho
-                nClosestPaths[i].first.erase(nClosestPaths[i].first.begin()); // remove o CD do caminho
-                nOptimal.push_back(std::make_tuple(deliveryman, usedCenter, mergePaths(pathsToCenters[j].first, nClosestPaths[i].first)));
+                nClosestPaths[i].first.erase(nClosestPaths[i].first.begin()); // removes the false vertex from the path
+                nClosestPaths[i].first.erase(nClosestPaths[i].first.begin()); // removes the DC from the path
+                std::vector<int> reversedPath = mergePaths(pathsToCenters[j].first, nClosestPaths[i].first); // this is the inverted path
+                nOptimal.push_back(std::make_tuple(deliveryman, usedCenter, invertVector(reversedPath)));
                 break;
             }
         }
     }    
     return nOptimal;                
 }
+

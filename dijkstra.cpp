@@ -125,7 +125,6 @@ std::vector<int> findNClosest(Vertex initialVertex, Graph myGraph, int n)
 
 
 std::vector<int> simpleDelivery(Vertex deliveryman, Vertex store, Vertex costumer, Graph myGraph){
-    printf("hi1");
     std::vector<int> parentStore = buildPath(store, myGraph, std::get<1> (dijkstra(deliveryman, store, myGraph, 1, 1)));
     std::vector<int> parentCostumer = buildPath(costumer, myGraph, std::get<1> (dijkstra(store, costumer, myGraph, 1, 1)));
     parentCostumer.erase(parentCostumer.begin());
@@ -158,8 +157,9 @@ std::vector<std::pair<std::vector<int>, float>> pathToEachCenter(Vertex initialV
     std::vector<double> distance = std::get<2> (dijkstraData);
     std::vector<int> centers = std::get<3> (dijkstraData);
     int i;
-    for(i = 0; i < centers.size(); i++);
+    for(i = 0; i < centers.size(); i++){
         paths.push_back(std::make_pair(buildPath(myGraph.vertices[centers[i]], myGraph, parent), distance[centers[i]]));
+    }
     
     return paths;
 } 
@@ -169,19 +169,16 @@ std::vector<std::pair<std::vector<int>, float>> pathToEachCenter(Vertex initialV
 std::vector<std::tuple<int, int, std::vector<int>>> optmizedDelivery(Vertex costumer, Graph myGraph, int n){
     std::vector<std::tuple<int, int, std::vector<int>>> nOptimal;
     int numVertices = myGraph.numVertices;
-
     // caminhos ótimos cliente-CD
     std::vector<std::pair<std::vector<int>, float>> pathsToCenters = pathToEachCenter(costumer, myGraph); 
     int numDCs = pathsToCenters.size();
-    
     // cria um vertice "falso" para calcular os n entregadores mais proximos que passam por CD
     myGraph.addVertex(numVertices, 10);
     Vertex pseudocostumer = myGraph.vertices[numVertices];
     for(int i = 0; i < numDCs; i++)
     {
-        myGraph.addEdge(myGraph.vertices[pathsToCenters[i].first[-1]], pseudocostumer, pathsToCenters[i].second);
+        myGraph.addEdge(myGraph.vertices[pathsToCenters[i].first[pathsToCenters[i].first.size()-1]], pseudocostumer, pathsToCenters[i].second);
     }   
-
     // entregadores mais proximos do cliente passando por um CD (caminhos CD-entregador)
     std::vector<std::vector<int>> nClosestPaths = pathsOfNClosest(pseudocostumer, myGraph, n); 
 
@@ -191,7 +188,7 @@ std::vector<std::tuple<int, int, std::vector<int>>> optmizedDelivery(Vertex cost
             if(pathsToCenters[j].first[-1] == nClosestPaths[i][1])
             {
                 int deliveryman = nClosestPaths[i][0];
-                int usedCenter = pathsToCenters[j].first[-1];
+                int usedCenter = pathsToCenters[j].first[pathsToCenters[j].first.size()-1];
                 nClosestPaths[i].erase(nClosestPaths[i].begin()); // remove o vértice falso do caminho
                 nClosestPaths[i].erase(nClosestPaths[i].begin()); // remove o CD do caminho
                 nOptimal.push_back(std::make_tuple(deliveryman, usedCenter, mergePaths(pathsToCenters[j].first, nClosestPaths[i])));

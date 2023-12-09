@@ -99,3 +99,25 @@ vector<tuple<int, int, double, int>> constructAddressFromUserInput()
     }
     return ret;
 }
+
+vector<tuple<int, int, double, int>> addDCsFromFile(const string& strFileName)
+{
+    // Open file
+    ifstream inputFile(strFileName);
+    vector<tuple<int, int, double, int>> ret;
+    // If the file can't be opened, an error message will be displayed
+    if (!inputFile.is_open())
+    {
+        cout << "Erro ao abrir o arquivo " << strFileName << endl;
+        return ret;
+    }
+    int iVertex1, iVertex2;
+    double fWeight;
+    while (inputFile >> iVertex1 >> iVertex2 >> fWeight)
+    {
+        ret.push_back(make_tuple(iVertex1, iVertex2, fWeight, 4));
+    }
+    // Fecha o arquivo
+    inputFile.close();
+    return ret;
+}

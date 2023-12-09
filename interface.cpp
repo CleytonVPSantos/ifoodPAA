@@ -26,12 +26,13 @@ void transicao()
 }
 
 void execTime(chrono::duration<double, milli> timeDuration) {
-    cout << "Tempo de execucao: " << timeDuration.count() << "milissegundos." << endl;
+    cout << "Tempo de execucao: " << timeDuration.count() << " milissegundos." << endl;
 }
 
 bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &address)
 {
     int iOpcao, iOpcao2, k, numEsquinas, numDCs;
+    vector<tuple<int, int, double, int>> newAddress;
     tuple<int, int, double, int> entregador, endereco;
     vector<int> resposta;
     vector< tuple< int, int, vector<int> > > respostaTupla;
@@ -298,13 +299,32 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
             transicao();
             return false;
         }
-        cout << "Insira a quantidade de centros de distribuicao para esse pedido:" << endl;
-        cin >> numDCs;
-        cout << "Nas proximas " << numDCs << " linhas, insira o endereco de cada centro de distribuicao:" << endl;
-        for (int i = 0; i < numDCs; i++) {
-            cin >> iVertice1 >> iVertice2 >> fWeight;
-            address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 4));
+        cout << "E necessario adicionar centros de distribuicao para essa operacao." << endl;
+        cout << "Voce gostaria de fazer o input via arquivo (0) ou via terminal (1)?" << endl;
+        cin >> iOpcao2;
+        if (iOpcao2 == 0) {
+            cout << "Insira o nome do arquivo:" << endl;
+            cin >> strFileName;
+            newAddress = addDCsFromFile(strFileName);
+            for (auto x: newAddress) {
+                address.push_back(x);
+            }
         }
+        else if (iOpcao2 == 1) {
+            cout << "Insira a quantidade de centros de distribuicao para esse pedido:" << endl;
+            cin >> numDCs;
+            cout << "Nas proximas " << numDCs << " linhas, insira o endereco de cada centro de distribuicao:" << endl;
+            for (int i = 0; i < numDCs; i++) {
+                cin >> iVertice1 >> iVertice2 >> fWeight;
+                address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 4));
+            }
+        }
+        else {
+            cout << "Opcao invalida." << endl;
+            transicao();
+            return false;
+        }
+        cout << "Centros de distribuicao adicionados!" << endl;
         cout << "Insira o endereco de entrega do pedido (cliente):" << endl;
         cin >> iVertice1 >> iVertice2 >> fWeight;
         address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 2));

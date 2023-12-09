@@ -28,7 +28,6 @@ struct Vertex {
 struct Node {
     int vertexId;
     double weight;
-    Node* next;
 };
 
 // Struct representing a graph
@@ -39,7 +38,7 @@ struct Graph {
     std::vector<Vertex> vertices;
 
     // Vector of edges of each vertex
-    std::vector<Node*> edges; // first node is the first adjacent vertex
+    std::vector<std::vector<Node>> edges; // first node is the first adjacent vertex
 
     // Function to delete a vertex and its associated edges
     void deleteTemporalVertices();

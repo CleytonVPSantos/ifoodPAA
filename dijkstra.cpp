@@ -55,6 +55,7 @@ dijkstra_type dijkstra(Vertex initialVertex, Vertex finalVertex, Graph myGraph, 
                 if((distance[v1.id] + cost < distance[v2.id]) || distance[v2.id] == -1){
                     distance[v2.id] = distance[v1.id] + cost;
                     heap.push(std::make_pair(distance[v2.id], v2.id));
+                    parent[v2.id] = v1.id; 
                 }
             }
             edges = edges->next;
@@ -100,7 +101,7 @@ std::vector<int> buildPath(Vertex finalVertex, Graph myGraph, std::vector<int> p
     int n = reversePath.size();
     std::vector<int> path (n);
     for(int i = 1; i <= n; i++){
-        path[n] = reversePath[n-i];
+        path[i-1] = reversePath[n-i];
     } 
     return path;
 }
@@ -123,15 +124,13 @@ std::vector<int> findNClosest(Vertex initialVertex, Graph myGraph, int n)
 
 
 
-std::vector<int> dijkstraWithGoal(Vertex initialVertex, Vertex finalVertex, Graph myGraph){
-    return buildPath(finalVertex, myGraph, std::get<1> (dijkstra(initialVertex, finalVertex, myGraph, 1, 1)));
-}
-
-
-
-std::vector<int> simpleDelivery(Vertex deliveryMan, Vertex store, Vertex costumer, Graph myGraph){
+std::vector<int> simpleDelivery(Vertex deliveryman, Vertex store, Vertex costumer, Graph myGraph){
+    printf("hi1");
+    std::vector<int> parentStore = buildPath(store, myGraph, std::get<1> (dijkstra(deliveryman, store, myGraph, 1, 1)));
+    std::vector<int> parentCostumer = buildPath(costumer, myGraph, std::get<1> (dijkstra(store, costumer, myGraph, 1, 1)));
+    parentCostumer.erase(parentCostumer.begin());
     
-    return mergePaths(dijkstraWithGoal(deliveryMan, store, myGraph), dijkstraWithGoal(store, costumer, myGraph));
+    return mergePaths(parentStore, parentCostumer);
 }
 
 

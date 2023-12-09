@@ -14,8 +14,8 @@ int main()
     vector<tuple<int, int, double, int>> address;
     while (!bExit)
     {
-        tela();
-        bExit = escolha(&ptrGraphCity, address);
+        screen();
+        bExit = choose(&ptrGraphCity, address);
     }
     return 0;
 }

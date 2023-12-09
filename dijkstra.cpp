@@ -47,18 +47,17 @@ dijkstra_type dijkstra(Vertex initialVertex, Vertex finalVertex, Graph myGraph, 
         heap.pop();
         if (visited[v1.id]) continue;
         if(distance[v1.id] == -1) { break; }
-        Node* edges = myGraph.edges[v1.id];
-        while(edges){
-            Vertex v2 = myGraph.vertices[edges->vertexId];
+        std::vector<Node> edges = myGraph.edges[v1.id];
+        for (auto node: edges) {
+            Vertex v2 = myGraph.vertices[node.vertexId];
             if(!visited[v2.id]) {
-                cost = edges->weight;
+                cost = node.weight;
                 if((distance[v1.id] + cost < distance[v2.id]) || distance[v2.id] == -1){
                     distance[v2.id] = distance[v1.id] + cost;
                     heap.push(std::make_pair(distance[v2.id], v2.id));
                     parent[v2.id] = v1.id; 
                 }
             }
-            edges = edges->next;
         }
         visited[v1.id] = true;
 

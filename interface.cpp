@@ -26,7 +26,7 @@ void transicao()
 bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &address)
 {
     int iOpcao, iOpcao2, k, numEsquinas, numDCs;
-    tuple<int, int, double, int> entregador;
+    tuple<int, int, double, int> entregador, endereco;
     vector<int> resposta;
     vector< tuple< int, int, vector<int> > > respostaTupla;
     Vertex iniVertex, vtxEntregador, vtxColeta, vtxCliente;
@@ -201,11 +201,27 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
         }
         resposta = simpleDelivery(vtxEntregador, vtxColeta, vtxCliente, **ptrGraph);
         (**ptrGraph).deleteTemporalVertices();
-        numEsquinas = resposta.size();
+        numEsquinas = (**ptrGraph).numVertices;
         cout << "A rota do entregador e:" << endl;
-        for (int i = 0; i < numEsquinas - 1; i++)
-            cout << resposta[i] << " --> ";
-        cout << resposta[numEsquinas - 1] << endl;
+        for (int i = 0; i < resposta.size() - 1; i++)
+        {
+            if (resposta[i] >= numEsquinas) {
+                endereco = address[resposta[i] - numEsquinas];
+                cout << "(" << get<0>(endereco) << ", " << get<1>(endereco) << ", "
+                     << get<2>(endereco) << ") --> ";
+            }
+            else {
+                cout << resposta[i] << " --> ";
+            }
+        }
+        if (resposta[resposta.size() - 1] > numEsquinas) {
+            endereco = address[resposta[resposta.size() - 1] - numEsquinas];
+            cout << "(" << get<0>(endereco) << ", " << get<1>(endereco) << ", "
+                 << get<2>(endereco) << ")" << endl;
+        }
+        else {
+            cout << resposta[resposta.size() - 1] << endl;
+        }
         transicao();
         return false;
     case 5:
@@ -228,7 +244,7 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
             cin >> iVertice1 >> iVertice2 >> fWeight;
             address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 4));
         }
-        cout << "Insira o endereco de coleta do pedido:" << endl;
+        cout << "Insira o endereco de entrega do pedido (cliente):" << endl;
         cin >> iVertice1 >> iVertice2 >> fWeight;
         address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 2));
         cout << "Insira o numero de entregadores proximos a serem encontrados:" << endl;
@@ -240,6 +256,36 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
         }
         respostaTupla = optmizedDelivery(vtxCliente, **ptrGraph, k);
         (**ptrGraph).deleteTemporalVertices();
+        numEsquinas = (**ptrGraph).numVertices;
+        k = respostaTupla.size();
+        for (int i = 0; i < k; i++) {
+            cout << "Caminho encontrado!\n";
+            endereco = address[get<0>(respostaTupla[i]) - numEsquinas];
+            cout << "Endereco do entregador: (" << get<0>(endereco) << ", " << get<1>(endereco) << ", " << get<2>(endereco) << ")" << endl;
+            endereco = address[get<1>(respostaTupla[i]) - numEsquinas];
+            cout << "Endereco do centro de distribuicao: (" << get<0>(endereco) << ", " << get<1>(endereco) << ", " << get<2>(endereco) << ")" << endl;
+            cout << "Rota do entregador: ";
+            for (int j = 0; j < get<2>(respostaTupla[i]).size() - 1; j++)
+            {
+                if (get<2>(respostaTupla[i])[j] >= numEsquinas) {
+                    endereco = address[get<2>(respostaTupla[i])[j] - numEsquinas];
+                    cout << "(" << get<0>(endereco) << ", " << get<1>(endereco) << ", "
+                         << get<2>(endereco) << ") --> ";
+                }
+                else {
+                    cout << get<2>(respostaTupla[i])[j] << " --> ";
+                }
+            }
+            if (get<2>(respostaTupla[i])[get<2>(respostaTupla[i]).size() - 1] >= numEsquinas) {
+                endereco = address[get<2>(respostaTupla[i])[get<2>(respostaTupla[i]).size() - 1] - numEsquinas];
+                cout << "(" << get<0>(endereco) << ", " << get<1>(endereco) << ", "
+                     << get<2>(endereco) << ")" << endl;
+            }
+            else {
+                cout << get<2>(respostaTupla[i])[get<2>(respostaTupla[i]).size() - 1] << endl;
+            }
+            cout << "===============" << endl;
+        }
         transicao();
         return false;
     default:

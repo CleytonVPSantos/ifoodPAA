@@ -185,7 +185,7 @@ std::vector<std::tuple<int, int, std::vector<int>>> optmizedDelivery(Vertex cost
     // encontra por qual CD cada caminho para cada entregador passa e junta os caminhos cliente-CD, CD-entregador
     for(int i = 0; i < n; i++){
         for(int j = 0; j < numDCs; j++){
-            if(pathsToCenters[j].first[-1] == nClosestPaths[i][1])
+            if(pathsToCenters[j].first[pathsToCenters[j].first.size()-1] == nClosestPaths[i][1])
             {
                 int deliveryman = nClosestPaths[i][0];
                 int usedCenter = pathsToCenters[j].first[pathsToCenters[j].first.size()-1];

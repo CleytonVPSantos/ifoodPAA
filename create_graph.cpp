@@ -11,7 +11,7 @@ struct Graph* newGraph(int numVertices)
     
     for (int i = 0; i < numVertices; i++) {
         newGraph->vertices.push_back(Vertex(i, 0));
-        newGraph->edges.push_back(NULL);
+        newGraph->edges.push_back(vector<Node>());
     }
 
     return newGraph;

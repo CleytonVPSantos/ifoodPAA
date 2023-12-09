@@ -4,7 +4,7 @@ using namespace std;
 
 void Graph::deleteTemporalVertices() {
     // Iterate through each vertex in the graph
-    for(int i = 0; i < numVertices; i++){
+    for(int i = numVertices-1; i>=0; i--){
         // Iterate through each edge of the current vertex
         if(vertices[i].type != 0){
             edges.erase(edges.begin()+i);

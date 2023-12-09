@@ -54,17 +54,17 @@ bool choose(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addre
     case 0:
         cout << "Opcao 0 - Sair" << endl;
         cout << "Digite SAIR para confirmar" << endl;
-        cin >> strConfirma;
-        if (strConfirma == "SAIR")
+        cin >> strConfirm;
+        if (strConfirm == "SAIR")
         {
             cout << "Saindo..." << endl;
-            transicao();
+            transition();
             return true;
         }
         else
         {
             cout << "Operacao cancelada." << endl;
-            transicao();
+            transition();
             return false;
         }
     case 1:
@@ -72,11 +72,11 @@ bool choose(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addre
         if ((**ptrGraph).numVertices != 0) // Confirm possible loss of information
         {
             cout << "Ja ha uma ruas cadastradas. Deseja sobrescrever? (S/N)" << endl;
-            cin >> strConfirma;
-            if (strConfirma != "S")
+            cin >> strConfirm;
+            if (strConfirm != "S")
             {
                 cout << "Operacao cancelada." << endl;
-                transicao();
+                transition();
                 return false;
             }
         }
@@ -96,12 +96,12 @@ bool choose(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addre
                 {
                     cout << "Grafo criado com sucesso!" << endl;
                     execTime(timeDuration);
-                    transicao();
+                    transition();
                 }
                 else
                 {
                     cout << "Erro ao criar grafo." << endl;
-                    transicao();
+                    transition();
                 }
                 return false;
             case 1:
@@ -109,17 +109,17 @@ bool choose(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addre
                 if (ptrGraph != nullptr)
                 {
                     cout << "Grafo criado com sucesso!" << endl;
-                    transicao();
+                    transition();
                 }
                 else
                 {
                     cout << "Erro ao criar grafo." << endl;
-                    transicao();
+                    transition();
                 }
                 return false;
             default:
                 cout << "Opcao invalida." << endl;
-                transicao();
+                transition();
                 return false;
         }
     case 2:
@@ -127,11 +127,11 @@ bool choose(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addre
         if (address.size() != 0) // Confirm possible loss of information
         {
             cout << "Ja ha entregadores cadastrados. Deseja sobrescrever? (S/N)" << endl;
-            cin >> strConfirma;
-            if (strConfirma != "S")
+            cin >> strConfirm;
+            if (strConfirm != "S")
             {
                 cout << "Operacao cancelada." << endl;
-                transicao();
+                transition();
                 return false;
             }
         }
@@ -151,16 +151,16 @@ bool choose(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addre
                 timeDuration = duration<double, milli>(timeStop - timeStart);
                 cout << "Entregadores adicionados!" << endl;
                 execTime(timeDuration);
-                transicao();
+                transition();
                 return false;
             case 1:
                 address = constructAddressFromUserInput();
                 cout << "Entregadores adicionados!" << endl;
-                transicao();
+                transition();
                 return false;
             default:
                 cout << "Opcao invalida." << endl;
-                transicao();
+                transition();
                 return false;
         }
     case 3:
@@ -168,13 +168,13 @@ bool choose(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addre
         if (address.size() == 0) // Confirm possible loss of information
         {
             cout << "Desculpe, nenhum entregador cadastrado." << endl;
-            transicao();
+            transition();
             return false;
         }
         if (*ptrGraph == nullptr) // Confirm possible loss of information
         {
             cout << "Nao ha rua cadastrada." << endl;
-            transicao();
+            transition();
             return false;
         }
         int iVertex1, iVertex2;
@@ -197,7 +197,7 @@ bool choose(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addre
         cout << "Insira o numero de entregadores proximos a serem encontrados:" << endl;
         cin >> numRequest;
         timeStart = high_resolution_clock::now();
-        resposta = findNClosest(iniVertex, **ptrGraph, k);
+        answer = findNClosest(iniVertex, **ptrGraph, numRequest);
         timeStop = high_resolution_clock::now();
         timeDuration = duration<double, milli>(timeStop - timeStart);
         // Erase temporal vertices from the graph
@@ -206,7 +206,7 @@ bool choose(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addre
         cout << "Os " << numRequest << " entregadores mais proximos estao nos enderecos:" << endl;
         for (int i = 0; i < numRequest; i++)
         {
-            deliveryAddress = address[resposta[i] - numCorners];
+            deliveryAddress = address[answer[i] - numCorners];
             cout << "(" << get<0>(deliveryAddress) << ", " << get<1>(deliveryAddress) << ", "
                  << get<2>(deliveryAddress) << ")" << endl;
         }
@@ -217,14 +217,14 @@ bool choose(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addre
             }
         }
         execTime(timeDuration);
-        transicao();
+        transition();
         return false;
     case 4:
         cout << "Opcao 4 - Definir rota dado pedido e entregador (operacao 2)" << endl;
         if (*ptrGraph == nullptr) // Confirm possible loss of information
         {
             cout << "Nao ha rua cadastrada." << endl;
-            transicao();
+            transition();
             return false;
         }
         newAddress = vector<tuple<int, int, double, int>>();
@@ -276,20 +276,20 @@ bool choose(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addre
         }
         newAddress = vector<tuple<int, int, double, int>>();
         execTime(timeDuration);
-        transicao();
+        transition();
         return false;
     case 5:
         cout << "Opcao 5 - Buscar rota via centro de distribuicao (operacao 3)" << endl;
         if (*ptrGraph == nullptr) // Corfirm possible loss of information
         {
             cout << "Nao ha rua cadastrada." << endl;
-            transicao();
+            transition();
             return false;
         }
         if (address.size() == 0) // Confirm possible loss of information
         {
             cout << "Desculpe, nenhum entregador cadastrado." << endl;
-            transicao();
+            transition();
             return false;
         }
         cout << "E necessario adicionar centros de distribuicao para essa operacao." << endl;
@@ -314,7 +314,7 @@ bool choose(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addre
         }
         else {
             cout << "Opcao invalida." << endl;
-            transicao();
+            transition();
             return false;
         }
         cout << "Centros de distribuicao adicionados!" << endl;
@@ -339,12 +339,12 @@ bool choose(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addre
         numCorners = (**ptrGraph).numVertices;
         numRequest = tupleAnswer.size();
         cout << "===============" << endl;
-        for (int i = 0; i < k; i++) {
+        for (int i = 0; i < numRequest; i++) {
             cout << "Caminho encontrado!\n";
             genericAddress = address[get<0>(tupleAnswer[i]) - numCorners];
-            cout << "Endereco do entregador: (" << get<0>(genericAddress) << ", " << get<1>(genericAddress) << ", " << get<2>(endereco) << ")" << endl;
+            cout << "Endereco do entregador: (" << get<0>(genericAddress) << ", " << get<1>(genericAddress) << ", " << get<2>(genericAddress) << ")" << endl;
             genericAddress = address[get<1>(tupleAnswer[i]) - numCorners];
-            cout << "Endereco do centro de distribuicao: (" << get<0>(genericAddress) << ", " << get<1>(genericAddress) << ", " << get<2>(endereco) << ")" << endl;
+            cout << "Endereco do centro de distribuicao: (" << get<0>(genericAddress) << ", " << get<1>(genericAddress) << ", " << get<2>(genericAddress) << ")" << endl;
             cout << "Rota do entregador: ";
             for (int j = 0; j < get<2>(tupleAnswer[i]).size() - 1; j++)
             {
@@ -374,11 +374,11 @@ bool choose(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addre
             }
         }
         execTime(timeDuration);
-        transicao();
+        transition();
         return false;
     default:
         cout << "Opcao invalida." << endl;
-        transicao();
+        transition();
         return false;
     }
 }

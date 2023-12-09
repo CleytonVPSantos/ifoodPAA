@@ -54,6 +54,17 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
         }
     case 1:
         cout << "Opcao 1 - Inserir informacoes sobre a cidade (input de ruas)" << endl;
+        if ((**ptrGraph).numVertices != 0)
+        {
+            cout << "Ja ha uma ruas cadastradas. Deseja sobrescrever? (S/N)" << endl;
+            cin >> strConfirma;
+            if (strConfirma == "N")
+            {
+                cout << "Operacao cancelada." << endl;
+                transicao();
+                return false;
+            }
+        }
         cout << "Voce gostaria de fazer o input via arquivo (0) ou via terminal (1)?" << endl;
         cin >> iOpcao2;
         switch (iOpcao2)
@@ -93,6 +104,18 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
         }
     case 2:
         cout << "Opcao 2 - Inserir informacoes sobre entregadores" << endl;
+        if (address.size() != 0)
+        {
+            cout << "Ja ha entregadores cadastrados. Deseja sobrescrever? (S/N)" << endl;
+            cin >> strConfirma;
+            if (strConfirma == "N")
+            {
+                cout << "Operacao cancelada." << endl;
+                transicao();
+                return false;
+            }
+        }
+        address = vector<tuple<int, int, double, int>>();
         cout << "Voce gostaria de fazer o input via arquivo (0) ou via terminal (1)?" << endl;
         cin >> iOpcao2;
         switch (iOpcao2)
@@ -175,6 +198,18 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
         return false;
     case 4:
         cout << "Opcao 4 - Definir rota dado pedido e entregador (operacao 2)" << endl;
+        if (address.size() != 0) {
+            cout << "AVISO: Essa operacao sobrescreve a lista de entregadores." << endl;
+            cout << "Deseja continuar? (S/N)" << endl;
+            cin >> strConfirma;
+            if (strConfirma == "N")
+            {
+                cout << "Operacao cancelada." << endl;
+                transicao();
+                return false;
+            }
+            address = vector<tuple<int, int, double, int>>();
+        }
         if (*ptrGraph == nullptr)
         {
             cout << "Nao ha rua cadastrada." << endl;

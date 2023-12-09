@@ -216,40 +216,35 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
             cout << "(" << get<0>(entregador) << ", " << get<1>(entregador) << ", "
                  << get<2>(entregador) << ")" << endl;
         }
+        for (int i = 0; i < address.size(); i++){
+            if(get<3>(address[i]) != 1){
+                address.erase(address.begin() + i);
+                i--;
+            }
+        }
         execTime(timeDuration);
         transicao();
         return false;
     case 4:
         cout << "Opcao 4 - Definir rota dado pedido e entregador (operacao 2)" << endl;
-        if (address.size() != 0) {
-            cout << "AVISO: Essa operacao sobrescreve a lista de entregadores." << endl;
-            cout << "Deseja continuar? (S/N)" << endl;
-            cin >> strConfirma;
-            if (strConfirma == "N")
-            {
-                cout << "Operacao cancelada." << endl;
-                transicao();
-                return false;
-            }
-            address = vector<tuple<int, int, double, int>>();
-        }
         if (*ptrGraph == nullptr)
         {
             cout << "Nao ha rua cadastrada." << endl;
             transicao();
             return false;
         }
+        newAddress = vector<tuple<int, int, double, int>>();
         cout << "Insira o endereco em que se encontra o entregador:" << endl;
         cin >> iVertice1 >> iVertice2 >> fWeight;
-        address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 1));
+        newAddress.push_back(make_tuple(iVertice1, iVertice2, fWeight, 1));
         cout << "Insira o endereco de coleta do pedido:" << endl;
         cin >> iVertice1 >> iVertice2 >> fWeight;
-        address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 3));
+        newAddress.push_back(make_tuple(iVertice1, iVertice2, fWeight, 3));
         cout << "Insira o endereco de entrega do pedido:" << endl;
         cin >> iVertice1 >> iVertice2 >> fWeight;
-        address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 2));
+        newAddress.push_back(make_tuple(iVertice1, iVertice2, fWeight, 2));
         timeStart = high_resolution_clock::now();
-        (*ptrGraph)->addTemporalVertices(&address);
+        (*ptrGraph)->addTemporalVertices(&newAddress);
         for (auto x: (**ptrGraph).vertices) {
             if (x.type == 1)
                 vtxEntregador = x;
@@ -267,7 +262,7 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
         for (int i = 0; i < resposta.size() - 1; i++)
         {
             if (resposta[i] >= numEsquinas) {
-                endereco = address[resposta[i] - numEsquinas];
+                endereco = newAddress[resposta[i] - numEsquinas];
                 cout << "(" << get<0>(endereco) << ", " << get<1>(endereco) << ", "
                      << get<2>(endereco) << ") --> ";
             }
@@ -276,13 +271,14 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
             }
         }
         if (resposta[resposta.size() - 1] > numEsquinas) {
-            endereco = address[resposta[resposta.size() - 1] - numEsquinas];
+            endereco = newAddress[resposta[resposta.size() - 1] - numEsquinas];
             cout << "(" << get<0>(endereco) << ", " << get<1>(endereco) << ", "
                  << get<2>(endereco) << ")" << endl;
         }
         else {
             cout << resposta[resposta.size() - 1] << endl;
         }
+        newAddress = vector<tuple<int, int, double, int>>();
         execTime(timeDuration);
         transicao();
         return false;
@@ -370,6 +366,12 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
                 cout << get<2>(respostaTupla[i])[get<2>(respostaTupla[i]).size() - 1] << endl;
             }
             cout << "===============" << endl;
+        }
+        for (int i = 0; i < address.size(); i++){
+            if(get<3>(address[i]) != 1){
+                address.erase(address.begin() + i);
+                i--;
+            }
         }
         execTime(timeDuration);
         transicao();

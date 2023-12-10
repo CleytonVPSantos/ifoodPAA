@@ -1,84 +1,89 @@
 #include <iostream>
 #include <vector>
-#include <chrono>
+#include <chrono>            // For time measurement
 #include <tuple>
-#include "graph.h"
-#include "create_graph.h"
-#include "dijkstra.h"
+#include "graph.h"           // Auxiliary functions for graph manipulation
+#include "createGraph.h"     // Auxiliary functions for graph creation
+#include "dijkstra.h"        // Auxiliary funcitons for operations
 using namespace std;
 using namespace std::chrono;
 
-void tela()
+void screen() // Welcoming menu
 {
-    string strTelaInicio = "\tdP     dP          dP                          88888888b                     dP   \n\t88     88          88                          88                            88   \n\t88     88 88d888b. 88d888b. .d8888b. 88d888b. a88aaaa    .d8888b. .d8888b. d8888P \n\t88     88 88'  `88 88'  `88 88'  `88 88'  `88  88        88'  `88 Y8ooooo.   88   \n\tY8.   .8P 88       88.  .88 88.  .88 88    88  88        88.  .88       88   88   \n\t`Y88888P' dP       88Y8888' `88888P8 dP    dP  dP        `88888P8 `88888P'   dP";
-    string strOpcoes = "\t*---------------------------------------*----------------------------------------*\n\t|                              0 - Sair do programa                              |\n\t*---------------------------------------*----------------------------------------*\n\t| 1 - Inserir informacoes sobre a cidade (input de ruas)                         |\n\t| 2 - Inserir informacoes sobre entregadores                                     |\n\t| 3 - Inserir pedido e retornar entregadores proximos (operacao 1)               |\n\t| 4 - Definir rota dado pedido e entregador (operacao 2)                         |\n\t| 5 - Buscar rota via centro de distribuicao (operacao 3)                        |\n\t*--------------------------------------------------------------------------------*";
-    cout << strTelaInicio << endl;
+    string strLogo = "\tdP     dP          dP                          88888888b                     dP   \n\t88     88          88                          88                            88   \n\t88     88 88d888b. 88d888b. .d8888b. 88d888b. a88aaaa    .d8888b. .d8888b. d8888P \n\t88     88 88'  `88 88'  `88 88'  `88 88'  `88  88        88'  `88 Y8ooooo.   88   \n\tY8.   .8P 88       88.  .88 88.  .88 88    88  88        88.  .88       88   88   \n\t`Y88888P' dP       88Y8888' `88888P8 dP    dP  dP        `88888P8 `88888P'   dP";
+    string strOptionMenu = "\t*---------------------------------------*----------------------------------------*\n\t|                              0 - Sair do programa                              |\n\t*---------------------------------------*----------------------------------------*\n\t| 1 - Inserir informacoes sobre a cidade (input de ruas)                         |\n\t| 2 - Inserir informacoes sobre entregadores                                     |\n\t| 3 - Inserir pedido e retornar entregadores proximos (operacao 1)               |\n\t| 4 - Definir rota dado pedido e entregador (operacao 2)                         |\n\t| 5 - Buscar rota via centro de distribuicao (operacao 3)                        |\n\t*--------------------------------------------------------------------------------*";
+    cout << strLogo << endl;
     cout << "\t   /------------------------------------------------------------------\\\n           |                      INSIRA A OPERACAO DESEJADA                  |" << endl;
     cout << "           \\__________________________________________________________________/" << endl;
-    cout << strOpcoes << endl;
+    cout << strOptionMenu << endl;
 }
 
-void transicao()
+void transition() // Transition between screens
 {
     cout << "Pressione Enter para continuar..." << endl;
     cin.ignore();
     cin.get();
 }
 
-void execTime(chrono::duration<double, milli> timeDuration) {
+void execTime(chrono::duration<double, milli> timeDuration) // Print execution time
+{
     cout << "Tempo de execucao: " << timeDuration.count() << " milissegundos." << endl;
 }
 
-bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &address)
+bool choose(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &address) // Choose operation
 {
-    int iOpcao, iOpcao2, k, numEsquinas, numDCs;
+    // Auxiliary variables
+    int iOption, iSecondaryOption, numRequest, numCorners, numDCs;
     vector<tuple<int, int, double, int>> newAddress;
-    tuple<int, int, double, int> entregador, endereco;
-    vector<int> resposta;
-    vector< tuple< int, int, vector<int> > > respostaTupla;
-    Vertex iniVertex, vtxEntregador, vtxColeta, vtxCliente;
+    tuple<int, int, double, int> deliveryAddress, genericAddress;
+    vector<int> answer;
+    vector< tuple< int, int, vector<int> > > tupleAnswer;
+    Vertex iniVertex, vtxDelivery, vtxShop, vtxCustomer;
     
-    string strFileName, strConfirma;
+    string strFileName, strConfirm;
     
+    // Time measurement variables
     auto timeStart = high_resolution_clock::now();
     auto timeStop = high_resolution_clock::now();
     auto timeDuration = duration<double, milli>(timeStop - timeStart);
     
-    cin >> iOpcao;
-    switch (iOpcao)
+    // Get operation from user
+    cin >> iOption;
+    switch (iOption)
     {
     case 0:
         cout << "Opcao 0 - Sair" << endl;
         cout << "Digite SAIR para confirmar" << endl;
-        cin >> strConfirma;
-        if (strConfirma == "SAIR")
+        cin >> strConfirm;
+        if (strConfirm == "SAIR")
         {
             cout << "Saindo..." << endl;
-            transicao();
+            transition();
             return true;
         }
         else
         {
             cout << "Operacao cancelada." << endl;
-            transicao();
+            transition();
             return false;
         }
     case 1:
         cout << "Opcao 1 - Inserir informacoes sobre a cidade (input de ruas)" << endl;
-        if ((**ptrGraph).numVertices != 0)
+        if ((**ptrGraph).numVertices != 0) // Confirm possible loss of information
         {
             cout << "Ja ha uma ruas cadastradas. Deseja sobrescrever? (S/N)" << endl;
-            cin >> strConfirma;
-            if (strConfirma == "N")
+            cin >> strConfirm;
+            if (strConfirm != "S")
             {
                 cout << "Operacao cancelada." << endl;
-                transicao();
+                transition();
                 return false;
             }
         }
+        // Ask whether user wants to input from file or terminal
         cout << "Voce gostaria de fazer o input via arquivo (0) ou via terminal (1)?" << endl;
-        cin >> iOpcao2;
-        switch (iOpcao2)
+        cin >> iSecondaryOption;
+        switch (iSecondaryOption)
         {
             case 0:
                 cout << "Insira o nome do arquivo:" << endl;
@@ -91,12 +96,12 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
                 {
                     cout << "Grafo criado com sucesso!" << endl;
                     execTime(timeDuration);
-                    transicao();
+                    transition();
                 }
                 else
                 {
                     cout << "Erro ao criar grafo." << endl;
-                    transicao();
+                    transition();
                 }
                 return false;
             case 1:
@@ -104,36 +109,38 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
                 if (ptrGraph != nullptr)
                 {
                     cout << "Grafo criado com sucesso!" << endl;
-                    transicao();
+                    transition();
                 }
                 else
                 {
                     cout << "Erro ao criar grafo." << endl;
-                    transicao();
+                    transition();
                 }
                 return false;
             default:
                 cout << "Opcao invalida." << endl;
-                transicao();
+                transition();
                 return false;
         }
     case 2:
         cout << "Opcao 2 - Inserir informacoes sobre entregadores" << endl;
-        if (address.size() != 0)
+        if (address.size() != 0) // Confirm possible loss of information
         {
             cout << "Ja ha entregadores cadastrados. Deseja sobrescrever? (S/N)" << endl;
-            cin >> strConfirma;
-            if (strConfirma == "N")
+            cin >> strConfirm;
+            if (strConfirm != "S")
             {
                 cout << "Operacao cancelada." << endl;
-                transicao();
+                transition();
                 return false;
             }
         }
+        // Erase past delivery addresses
         address = vector<tuple<int, int, double, int>>();
+        // Ask whether user wants to input from file or terminal
         cout << "Voce gostaria de fazer o input via arquivo (0) ou via terminal (1)?" << endl;
-        cin >> iOpcao2;
-        switch (iOpcao2)
+        cin >> iSecondaryOption;
+        switch (iSecondaryOption)
         {
             case 0:
                 cout << "Insira o nome do arquivo:" << endl;
@@ -144,39 +151,41 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
                 timeDuration = duration<double, milli>(timeStop - timeStart);
                 cout << "Entregadores adicionados!" << endl;
                 execTime(timeDuration);
-                transicao();
+                transition();
                 return false;
             case 1:
                 address = constructAddressFromUserInput();
                 cout << "Entregadores adicionados!" << endl;
-                transicao();
+                transition();
                 return false;
             default:
                 cout << "Opcao invalida." << endl;
-                transicao();
+                transition();
                 return false;
         }
     case 3:
         cout << "Opcao 3 - Inserir pedido e retornar entregadores proximos (operacao 1)" << endl;
-        if (address.size() == 0) {
+        if (address.size() == 0) // Confirm possible loss of information
+        {
             cout << "Desculpe, nenhum entregador cadastrado." << endl;
-            transicao();
+            transition();
             return false;
         }
-        if (*ptrGraph == nullptr)
+        if (*ptrGraph == nullptr) // Confirm possible loss of information
         {
             cout << "Nao ha rua cadastrada." << endl;
-            transicao();
+            transition();
             return false;
         }
-        int iVertice1, iVertice2;
+        int iVertex1, iVertex2;
         double fWeight;
         cout << "Indique o endereco de coleta do pedido:" << endl;
-        cin >> iVertice1 >> iVertice2 >> fWeight;
-        address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 3));
-        //Ordenar adress
+        cin >> iVertex1 >> iVertex2 >> fWeight;
+        // Add to the address vector
+        address.push_back(make_tuple(iVertex1, iVertex2, fWeight, 3));
+        // Add temporal vertices to the graph
         (*ptrGraph)->addTemporalVertices(&address);
-        //iterar para achar o vertice de coleta tipo
+        // Find the shop vertex
         for (int i = 0; i < (*ptrGraph)->numVertices; i++)
         {
             if ((*ptrGraph)->vertices[i].type == 3)
@@ -186,123 +195,107 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
             }
         }
         cout << "Insira o numero de entregadores proximos a serem encontrados:" << endl;
-        cin >> k;/*
-        cout << "Infos do grafo:\n";
-        cout << "numVertices: " << (*ptrGraph)->numVertices << endl;
-        for (auto x: (**ptrGraph).vertices)
-        {
-            cout << "id: " << x.id << " type: " << x.type << endl;
-        }
-        iOpcao2 = 0;
-        for (auto y: (**ptrGraph).edges)
-        {
-            cout << "vizinhos de " << iOpcao2++ << ": ";
-            while (y != nullptr) {
-                cout << y->vertexId << " ";
-                y = y->next;
-            }
-            cout << endl;
-        }*/
+        cin >> numRequest;
         timeStart = high_resolution_clock::now();
-        resposta = findNClosest(iniVertex, **ptrGraph, k);
+        answer = findNClosest(iniVertex, **ptrGraph, numRequest);
         timeStop = high_resolution_clock::now();
         timeDuration = duration<double, milli>(timeStop - timeStart);
+        // Erase temporal vertices from the graph
         (**ptrGraph).deleteTemporalVertices();
-        numEsquinas = (**ptrGraph).numVertices;
-        cout << "Os " << k << " entregadores mais proximos estao nos enderecos:" << endl;
-        for (int i = 0; i < k; i++)
+        numCorners = (**ptrGraph).numVertices;
+        cout << "Os " << numRequest << " entregadores mais proximos estao nos enderecos:" << endl;
+        for (int i = 0; i < numRequest; i++)
         {
-            entregador = address[resposta[i] - numEsquinas];
-            cout << "(" << get<0>(entregador) << ", " << get<1>(entregador) << ", "
-                 << get<2>(entregador) << ")" << endl;
+            deliveryAddress = address[answer[i] - numCorners];
+            cout << "(" << get<0>(deliveryAddress) << ", " << get<1>(deliveryAddress) << ", "
+                 << get<2>(deliveryAddress) << ")" << endl;
+        }
+        for (int i = 0; i < address.size(); i++){
+            if(get<3>(address[i]) != 1){
+                address.erase(address.begin() + i);
+                i--;
+            }
         }
         execTime(timeDuration);
-        transicao();
+        transition();
         return false;
     case 4:
         cout << "Opcao 4 - Definir rota dado pedido e entregador (operacao 2)" << endl;
-        if (address.size() != 0) {
-            cout << "AVISO: Essa operacao sobrescreve a lista de entregadores." << endl;
-            cout << "Deseja continuar? (S/N)" << endl;
-            cin >> strConfirma;
-            if (strConfirma == "N")
-            {
-                cout << "Operacao cancelada." << endl;
-                transicao();
-                return false;
-            }
-            address = vector<tuple<int, int, double, int>>();
-        }
-        if (*ptrGraph == nullptr)
+        if (*ptrGraph == nullptr) // Confirm possible loss of information
         {
             cout << "Nao ha rua cadastrada." << endl;
-            transicao();
+            transition();
             return false;
         }
+        newAddress = vector<tuple<int, int, double, int>>();
         cout << "Insira o endereco em que se encontra o entregador:" << endl;
-        cin >> iVertice1 >> iVertice2 >> fWeight;
-        address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 1));
+        cin >> iVertex1 >> iVertex2 >> fWeight;
+        newAddress.push_back(make_tuple(iVertex1, iVertex2, fWeight, 1));
         cout << "Insira o endereco de coleta do pedido:" << endl;
-        cin >> iVertice1 >> iVertice2 >> fWeight;
-        address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 3));
+        cin >> iVertex1 >> iVertex2 >> fWeight;
+        newAddress.push_back(make_tuple(iVertex1, iVertex2, fWeight, 3));
         cout << "Insira o endereco de entrega do pedido:" << endl;
-        cin >> iVertice1 >> iVertice2 >> fWeight;
-        address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 2));
+        cin >> iVertex1 >> iVertex2 >> fWeight;
+        newAddress.push_back(make_tuple(iVertex1, iVertex2, fWeight, 2));
         timeStart = high_resolution_clock::now();
-        (*ptrGraph)->addTemporalVertices(&address);
+        (*ptrGraph)->addTemporalVertices(&newAddress);
+        // Find the delivery, shop and customer vertices
         for (auto x: (**ptrGraph).vertices) {
             if (x.type == 1)
-                vtxEntregador = x;
+                vtxDelivery = x;
             else if (x.type == 3)
-                vtxColeta = x;
+                vtxShop = x;
             else if (x.type == 2)
-                vtxCliente = x;
+                vtxCustomer = x;
         }
-        resposta = simpleDelivery(vtxEntregador, vtxColeta, vtxCliente, **ptrGraph);
+        answer = simpleDelivery(vtxDelivery, vtxShop, vtxCustomer, **ptrGraph);
         timeStop = high_resolution_clock::now();
         timeDuration = duration<double, milli>(timeStop - timeStart);
+        // Erase temporal vertices from the graph  
         (**ptrGraph).deleteTemporalVertices();
-        numEsquinas = (**ptrGraph).numVertices;
+        numCorners = (**ptrGraph).numVertices;
         cout << "A rota do entregador e:" << endl;
-        for (int i = 0; i < resposta.size() - 1; i++)
+        for (int i = 0; i < answer.size() - 1; i++)
         {
-            if (resposta[i] >= numEsquinas) {
-                endereco = address[resposta[i] - numEsquinas];
-                cout << "(" << get<0>(endereco) << ", " << get<1>(endereco) << ", "
-                     << get<2>(endereco) << ") --> ";
+            if (answer[i] >= numCorners) {
+                genericAddress = newAddress[answer[i] - numCorners];
+                cout << "(" << get<0>(genericAddress) << ", " << get<1>(genericAddress) << ", "
+                     << get<2>(genericAddress) << ") --> ";
             }
             else {
-                cout << resposta[i] << " --> ";
+                cout << answer[i] << " --> ";
             }
         }
-        if (resposta[resposta.size() - 1] > numEsquinas) {
-            endereco = address[resposta[resposta.size() - 1] - numEsquinas];
-            cout << "(" << get<0>(endereco) << ", " << get<1>(endereco) << ", "
-                 << get<2>(endereco) << ")" << endl;
+        if (answer[answer.size() - 1] > numCorners) {
+            genericAddress = newAddress[answer[answer.size() - 1] - numCorners];
+            cout << "(" << get<0>(genericAddress) << ", " << get<1>(genericAddress) << ", "
+                 << get<2>(genericAddress) << ")" << endl;
         }
         else {
-            cout << resposta[resposta.size() - 1] << endl;
+            cout << answer[answer.size() - 1] << endl;
         }
+        newAddress = vector<tuple<int, int, double, int>>();
         execTime(timeDuration);
-        transicao();
+        transition();
         return false;
     case 5:
         cout << "Opcao 5 - Buscar rota via centro de distribuicao (operacao 3)" << endl;
-        if (*ptrGraph == nullptr)
+        if (*ptrGraph == nullptr) // Corfirm possible loss of information
         {
             cout << "Nao ha rua cadastrada." << endl;
-            transicao();
+            transition();
             return false;
         }
-        if (address.size() == 0) {
+        if (address.size() == 0) // Confirm possible loss of information
+        {
             cout << "Desculpe, nenhum entregador cadastrado." << endl;
-            transicao();
+            transition();
             return false;
         }
         cout << "E necessario adicionar centros de distribuicao para essa operacao." << endl;
         cout << "Voce gostaria de fazer o input via arquivo (0) ou via terminal (1)?" << endl;
-        cin >> iOpcao2;
-        if (iOpcao2 == 0) {
+        cin >> iSecondaryOption;
+        if (iSecondaryOption == 0) {
             cout << "Insira o nome do arquivo:" << endl;
             cin >> strFileName;
             newAddress = addDCsFromFile(strFileName);
@@ -310,73 +303,82 @@ bool escolha(struct Graph **ptrGraph, vector<tuple<int, int, double, int>> &addr
                 address.push_back(x);
             }
         }
-        else if (iOpcao2 == 1) {
+        else if (iSecondaryOption == 1) {
             cout << "Insira a quantidade de centros de distribuicao para esse pedido:" << endl;
             cin >> numDCs;
             cout << "Nas proximas " << numDCs << " linhas, insira o endereco de cada centro de distribuicao:" << endl;
             for (int i = 0; i < numDCs; i++) {
-                cin >> iVertice1 >> iVertice2 >> fWeight;
-                address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 4));
+                cin >> iVertex1 >> iVertex2 >> fWeight;
+                address.push_back(make_tuple(iVertex1, iVertex2, fWeight, 4));
             }
         }
         else {
             cout << "Opcao invalida." << endl;
-            transicao();
+            transition();
             return false;
         }
         cout << "Centros de distribuicao adicionados!" << endl;
         cout << "Insira o endereco de entrega do pedido (cliente):" << endl;
-        cin >> iVertice1 >> iVertice2 >> fWeight;
-        address.push_back(make_tuple(iVertice1, iVertice2, fWeight, 2));
+        cin >> iVertex1 >> iVertex2 >> fWeight;
+        address.push_back(make_tuple(iVertex1, iVertex2, fWeight, 2));
         cout << "Insira o numero de entregadores proximos a serem encontrados:" << endl;
-        cin >> k;
+        cin >> numRequest;
         timeStart = high_resolution_clock::now();
+        // Add temporal vertices to the graph
         (*ptrGraph)->addTemporalVertices(&address);
+        // Find the customer vertex
         for (auto x: (**ptrGraph).vertices) {
             if (x.type == 2)
-                vtxCliente = x;
+                vtxCustomer = x;
         }
-        respostaTupla = optmizedDelivery(vtxCliente, **ptrGraph, k);
+        tupleAnswer = optmizedDelivery(vtxCustomer, **ptrGraph, numRequest);
         timeStop = high_resolution_clock::now();
         timeDuration = duration<double, milli>(timeStop - timeStart);
+        // Erase temporal vertices from the graph
         (**ptrGraph).deleteTemporalVertices();
-        numEsquinas = (**ptrGraph).numVertices;
-        k = respostaTupla.size();
+        numCorners = (**ptrGraph).numVertices;
+        numRequest = tupleAnswer.size();
         cout << "===============" << endl;
-        for (int i = 0; i < k; i++) {
+        for (int i = 0; i < numRequest; i++) {
             cout << "Caminho encontrado!\n";
-            endereco = address[get<0>(respostaTupla[i]) - numEsquinas];
-            cout << "Endereco do entregador: (" << get<0>(endereco) << ", " << get<1>(endereco) << ", " << get<2>(endereco) << ")" << endl;
-            endereco = address[get<1>(respostaTupla[i]) - numEsquinas];
-            cout << "Endereco do centro de distribuicao: (" << get<0>(endereco) << ", " << get<1>(endereco) << ", " << get<2>(endereco) << ")" << endl;
+            genericAddress = address[get<0>(tupleAnswer[i]) - numCorners];
+            cout << "Endereco do entregador: (" << get<0>(genericAddress) << ", " << get<1>(genericAddress) << ", " << get<2>(genericAddress) << ")" << endl;
+            genericAddress = address[get<1>(tupleAnswer[i]) - numCorners];
+            cout << "Endereco do centro de distribuicao: (" << get<0>(genericAddress) << ", " << get<1>(genericAddress) << ", " << get<2>(genericAddress) << ")" << endl;
             cout << "Rota do entregador: ";
-            for (int j = 0; j < get<2>(respostaTupla[i]).size() - 1; j++)
+            for (int j = 0; j < get<2>(tupleAnswer[i]).size() - 1; j++)
             {
-                if (get<2>(respostaTupla[i])[j] >= numEsquinas) {
-                    endereco = address[get<2>(respostaTupla[i])[j] - numEsquinas];
-                    cout << "(" << get<0>(endereco) << ", " << get<1>(endereco) << ", "
-                         << get<2>(endereco) << ") --> ";
+                if (get<2>(tupleAnswer[i])[j] >= numCorners) {
+                    genericAddress = address[get<2>(tupleAnswer[i])[j] - numCorners];
+                    cout << "(" << get<0>(genericAddress) << ", " << get<1>(genericAddress) << ", "
+                         << get<2>(genericAddress) << ") --> ";
                 }
                 else {
-                    cout << get<2>(respostaTupla[i])[j] << " --> ";
+                    cout << get<2>(tupleAnswer[i])[j] << " --> ";
                 }
             }
-            if (get<2>(respostaTupla[i])[get<2>(respostaTupla[i]).size() - 1] >= numEsquinas) {
-                endereco = address[get<2>(respostaTupla[i])[get<2>(respostaTupla[i]).size() - 1] - numEsquinas];
-                cout << "(" << get<0>(endereco) << ", " << get<1>(endereco) << ", "
-                     << get<2>(endereco) << ")" << endl;
+            if (get<2>(tupleAnswer[i])[get<2>(tupleAnswer[i]).size() - 1] >= numCorners) {
+                genericAddress = address[get<2>(tupleAnswer[i])[get<2>(tupleAnswer[i]).size() - 1] - numCorners];
+                cout << "(" << get<0>(genericAddress) << ", " << get<1>(genericAddress) << ", "
+                     << get<2>(genericAddress) << ")" << endl;
             }
             else {
-                cout << get<2>(respostaTupla[i])[get<2>(respostaTupla[i]).size() - 1] << endl;
+                cout << get<2>(tupleAnswer[i])[get<2>(tupleAnswer[i]).size() - 1] << endl;
             }
             cout << "===============" << endl;
         }
+        for (int i = 0; i < address.size(); i++){
+            if(get<3>(address[i]) != 1){
+                address.erase(address.begin() + i);
+                i--;
+            }
+        }
         execTime(timeDuration);
-        transicao();
+        transition();
         return false;
     default:
         cout << "Opcao invalida." << endl;
-        transicao();
+        transition();
         return false;
     }
 }

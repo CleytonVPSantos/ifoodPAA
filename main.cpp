@@ -2,7 +2,7 @@
 #include <vector>
 #include <tuple>
 #include "interface.h"
-#include "create_graph.h"
+#include "createGraph.h"
 #include "graph.h"
 
 using namespace std;
@@ -14,8 +14,8 @@ int main()
     vector<tuple<int, int, double, int>> address;
     while (!bExit)
     {
-        tela();
-        bExit = escolha(&ptrGraphCity, address);
+        screen();
+        bExit = choose(&ptrGraphCity, address);
     }
     return 0;
 }

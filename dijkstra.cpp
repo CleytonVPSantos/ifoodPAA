@@ -220,4 +220,3 @@ std::vector<std::tuple<int, int, std::vector<int>>> optmizedDelivery(Vertex cost
     }    
     return nOptimal;                
 }
-
